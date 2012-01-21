@@ -15,7 +15,11 @@ public class Randomizer {
 	}
 	
 	public static int nextInt(int pX) {
-		return sRandom.nextInt(pX);
+		int ret;
+		synchronized(sRandom) {
+			ret = sRandom.nextInt(pX);
+		}
+		return ret;
 	}
 
 }

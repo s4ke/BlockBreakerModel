@@ -95,9 +95,9 @@ public class LevelGenerator {
 		
 		ArrayList<Block> repl = new ArrayList<Block>();
 		Level level = new Level(matrix, Gravity.NORTH, repl, win);
+		createReplacementList(matrix, pNumberOfMoves, repl);
 		
 		while(level.checkWin()) {
-			repl.clear();
 			createReplacementList(matrix, pNumberOfMoves, repl);
 		}
 		

@@ -242,6 +242,10 @@ public class Level implements Serializable, Cloneable {
 			return INFINITE_BLOCKS_LEFT;
 		}
 	}
+	
+	public ArrayList<Block> getReplacementList() {
+		return this.mReplacementList;
+	}
 
 	public String getBlocksDisplayText() {
 		String turnsLeft = "00" + this.getBlocksLeft();
