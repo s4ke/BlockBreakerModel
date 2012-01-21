@@ -98,6 +98,7 @@ public class Level implements Serializable, Cloneable {
 			this.nextBlock();
 			this.mStarted = true;
 		}
+		notifyAll();
 	}
 	
 	/**
@@ -176,6 +177,7 @@ public class Level implements Serializable, Cloneable {
 		if(this.mNextBlockListener != null) {
 			this.mNextBlockListener.onNextBlockChanged(new NextBlockChangedEvent(this, this.mNextBlock));
 		}
+		notifyAll();
 	}
 
 	/**
