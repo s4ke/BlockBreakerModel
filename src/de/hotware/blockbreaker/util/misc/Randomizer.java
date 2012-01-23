@@ -18,7 +18,7 @@ public class Randomizer {
 		int ret;
 		synchronized(sRandom) {
 			ret = sRandom.nextInt(pX);
-			sRandom.notify();
+			sRandom.notifyAll();
 		}
 		return ret;
 	}
