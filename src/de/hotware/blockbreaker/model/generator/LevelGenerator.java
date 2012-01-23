@@ -10,6 +10,13 @@ import de.hotware.blockbreaker.model.Block.BlockColor;
 import de.hotware.blockbreaker.model.Level.Gravity;
 import de.hotware.blockbreaker.util.misc.Randomizer;
 
+/**
+ * I am pretty proud of this little baby. Took me a while figuring out the
+ * algorithm, but behold: The almighty LevelGenerator that renders the need
+ * for creating a LevelEditor to a not that big concern anymore.
+ * @author Martin Braun
+ * @since Jan 2012
+ */
 public class LevelGenerator {
 	
 	private static final int LEVEL_WIDTH = 6;
@@ -36,31 +43,6 @@ public class LevelGenerator {
 		return level;
 	}
 	
-	private static class WinValuePair implements Comparable<WinValuePair> {
-		
-		private final BlockColor mBlockColor;
-		private final int mWinCount;
-		
-		public WinValuePair(BlockColor pBlockColor, int pWinCount) {
-			this.mBlockColor = pBlockColor;
-			this.mWinCount = pWinCount;
-		}
-		
-		public BlockColor getBlockColor() {
-			return this.mBlockColor;
-		}
-		
-		public int getWinCount() {
-			return this.mWinCount;
-		}
-
-		@Override
-		public int compareTo(WinValuePair pOther) {
-			return pOther.getWinCount() - this.mWinCount;
-		}
-		
-	}
-	
 	public static Level createRandomLevelFromSeed(long pSeed, int pNumberOfMoves) {
 		Randomizer.setSeed(pSeed);
 		Level level = createRandomLevel(pNumberOfMoves);
@@ -81,7 +63,6 @@ public class LevelGenerator {
 	        		Randomizer.nextInt(7));
 		}
 	        		
-		
 		WinValuePair[] sorting = new WinValuePair[5];
 		for(int i = 0; i < sorting.length; ++i) {
 			sorting[i] = new WinValuePair(BlockColor.numberToColor(i+1), win.getWinCount(i+1));
@@ -103,6 +84,10 @@ public class LevelGenerator {
 		
 		return level;
 	}
+	
+	////////////////////////////////////////////////////////////////////
+	////					Private Methods							////
+	////////////////////////////////////////////////////////////////////
 	
 	/**
 	 * Moves the blocks in the Array around and creates a ReplacementList
@@ -325,6 +310,35 @@ public class LevelGenerator {
 		for(int i = 0; i < pSize; ++i) {
 			pMatrix[i][pColumn] = new Block(pColor, i, pColumn);
 		}
+	}
+	
+	////////////////////////////////////////////////////////////////////
+	////					    Inner Classes						////
+	////////////////////////////////////////////////////////////////////
+	
+	private static class WinValuePair implements Comparable<WinValuePair> {
+		
+		private final BlockColor mBlockColor;
+		private final int mWinCount;
+		
+		public WinValuePair(BlockColor pBlockColor, int pWinCount) {
+			this.mBlockColor = pBlockColor;
+			this.mWinCount = pWinCount;
+		}
+		
+		public BlockColor getBlockColor() {
+			return this.mBlockColor;
+		}
+		
+		public int getWinCount() {
+			return this.mWinCount;
+		}
+
+		@Override
+		public int compareTo(WinValuePair pOther) {
+			return pOther.getWinCount() - this.mWinCount;
+		}
+		
 	}
 	
 }

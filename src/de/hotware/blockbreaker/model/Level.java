@@ -186,9 +186,14 @@ public class Level implements Serializable, Cloneable {
 	public boolean checkWin() {
 		boolean win = true; 
 		boolean help = false;
-		for(int i = BlockColor.getLowestColorNumber(); i <= BlockColor.getBiggestColorNumber() && win; ++i) {
+		int biggestColorNumber = BlockColor.getBiggestColorNumber();
+		int winCountVar;
+		BlockColor blockColorVar;
+		for(int i = BlockColor.getLowestColorNumber(); i <= biggestColorNumber && win; ++i) {
+			winCountVar = this.mWinCondition.getWinCount(i);
+			blockColorVar = BlockColor.numberToColor(i);
 			for(int j = 0; j < this.mSizeX && !help; ++j) {
-				help = (help || this.checkRow(j, i) || this.checkColumn(j, i)) ;
+				help = (help || this.checkRow(j, blockColorVar, winCountVar) || this.checkColumn(j, blockColorVar, winCountVar)) ;
 			}
 			win = win && help;
 			help = false;
@@ -196,34 +201,30 @@ public class Level implements Serializable, Cloneable {
 		return win;
 	}
 
-	private boolean checkRow(int pX, int pColorNumber) {
-		int winCount = this.mWinCondition.getWinCount(pColorNumber);
-		BlockColor colorCheck = BlockColor.numberToColor(pColorNumber);
+	private boolean checkRow(int pX, BlockColor pColorCheck, int pWinCount) {
 		int counter = 0;
 		for(int i = 0; i < this.mSizeX; ++i) {
-			if(this.mMatrix[pX][i].getColor() == colorCheck) {
+			if(this.mMatrix[pX][i].getColor() == pColorCheck) {
 				++counter;
 			} else {
 				counter = 0;
 			}
-			if(counter == winCount) {
+			if(counter == pWinCount) {
 				return true;
 			}
 		}
 		return false;
 	}
 
-	private boolean checkColumn(int pY, int pColorNumber) {
-		int winCount = this.mWinCondition.getWinCount(pColorNumber);
+	private boolean checkColumn(int pY, BlockColor pColorCheck, int pWinCount) {
 		int counter = 0;
-		BlockColor colorCheck = BlockColor.numberToColor(pColorNumber);
 		for(int i = 0; i < this.mSizeY; ++i) {
-			if(this.mMatrix[i][pY].getColor() == colorCheck) {
+			if(this.mMatrix[i][pY].getColor() == pColorCheck) {
 				++counter;
 			} else {
 				counter = 0;
 			}
-			if(counter == winCount) {
+			if(counter == pWinCount) {
 				return true;
 			}
 		}
