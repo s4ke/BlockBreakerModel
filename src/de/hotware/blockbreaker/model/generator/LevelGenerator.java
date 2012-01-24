@@ -45,12 +45,13 @@ public class LevelGenerator {
 	
 	public static Level createRandomLevelFromSeed(long pSeed, int pNumberOfMoves) {
 		Randomizer.setSeed(pSeed);
-		Level level = createRandomLevel(pNumberOfMoves);
+		Level level = createRandomSolvedLevel();
+		rearrangeLevel(level, pNumberOfMoves);
 		Randomizer.newRandomObject();
 		return level;
 	}
 	
-	public static Level createRandomLevel(int pNumberOfMoves) {
+	public static Level createRandomSolvedLevel() {
 		Block[][] matrix = new Block[6][6];
 		
 		WinCondition win = null;
@@ -76,13 +77,19 @@ public class LevelGenerator {
 		
 		ArrayList<Block> repl = new ArrayList<Block>();
 		Level level = new Level(matrix, Gravity.NORTH, repl, win);
-		createReplacementList(matrix, pNumberOfMoves, repl);
-		
-		while(level.checkWin()) {
-			createReplacementList(matrix, pNumberOfMoves, repl);
-		}
 		
 		return level;
+	}
+	
+	public static void rearrangeLevel(Level pLevel, int pNumberOfMoves) {
+		Block[][] matrix = pLevel.getMatrix();
+		ArrayList<Block> repl = pLevel.getReplacementList();
+		
+		createReplacementList(matrix, pNumberOfMoves, repl);
+		
+		while(pLevel.checkWin()) {
+			createReplacementList(matrix, pNumberOfMoves, repl);
+		}		
 	}
 	
 	////////////////////////////////////////////////////////////////////
@@ -167,7 +174,7 @@ public class LevelGenerator {
 				break;
 			}
 			blockColor = pWinValuePairs[i].getBlockColor();
-			if((Randomizer.nextInt(1)) == 1) {
+			if(Randomizer.nextInt(2) + 1 == 1) {
 				if(!setToRow(pMatrix, blockColor, winCount)) {
 					setToColumn(pMatrix, blockColor, winCount);
 				}
@@ -181,33 +188,30 @@ public class LevelGenerator {
 	
 	private static boolean setToRow(Block[][] pMatrix, BlockColor pColor, int pSize) {
 		//compute the fitting rows
-		int[] help  = new int[pMatrix.length];
-		int count = 0;
-		for(int i = 0; i < pMatrix.length; ++i) {
+		ArrayList<Integer> help  = new ArrayList<Integer>();
+		for(int i = 0; i < LEVEL_WIDTH; ++i) {
 			if(fitsInRow(pMatrix, i, pSize)) {
-				help[count] = i;
-				++count;
-			}
+				help.add(i);
+			}	
 		}
-		int[] rows = new int[count];
-		for(int i = 0; i < count; ++i) {
-			rows[i] = help[i];
-		}
+		int count = help.size();
+		Integer[] rows = new Integer[count];
+		rows = help.toArray(rows);
 		
 		//compute the fitting positions in the chosen row and set it to a random possible position
-		if(count > 0) {
-			
+		if(count > 0) {			
 			int randomRowNumber = rows[Randomizer.nextInt(count)];
-			help = new int[pMatrix.length];
+			help.clear();
 			count = 0;
-			for(int i = 0; i < pMatrix.length; ++i) {
+			for(int i = 0; i < LEVEL_HEIGHT; ++i) {
 				if(fitsInRowPosition(pMatrix, randomRowNumber, i, pSize)) {
-					help[count] = i;
-					++count;
+					help.add(i);
 				}
 			}
+			count = help.size();
 			if(count > 0) {
-				int pos[] = new int[count];
+				Integer[] pos = new Integer[count];
+				pos = help.toArray(pos);
 				int randomPosNumber = pos[Randomizer.nextInt(count)];
 				setToPositionInRow(pMatrix, randomRowNumber, randomPosNumber, pColor, pSize);
 				return true;
@@ -218,7 +222,7 @@ public class LevelGenerator {
 	
 	private static boolean fitsInRow(Block[][] pMatrix, int pRow, int pSize) {
 		int space = 0;
-		for(int i = 0; i < pMatrix[pRow].length && space < pSize; ++i) {
+		for(int i = 0; i < LEVEL_WIDTH && space < pSize; ++i) {
 			if(pMatrix[pRow][i] == null) {
 				++space;
 			} else {
@@ -230,7 +234,7 @@ public class LevelGenerator {
 	
 	private static boolean fitsInRowPosition(Block[][] pMatrix, int pRow, int pPosition, int pSize) {
 		int space = 0;
-		for(int i = 0; i < pMatrix[pRow].length && space < pSize; ++i) {
+		for(int i = pPosition; i < LEVEL_WIDTH && space < pSize; ++i) {
 			if(pMatrix[pRow][i] == null) {
 				++space;
 			} else {
@@ -241,39 +245,39 @@ public class LevelGenerator {
 	}
 	
 	private static void setToPositionInRow(Block[][] pMatrix, int pRow, int pPosition, BlockColor pColor, int pSize) {
-		for(int i = 0; i < pSize; ++i) {
+		for(int i = pPosition; (i-pPosition) < pSize; ++i) {
 			pMatrix[pRow][i] = new Block(pColor, pRow, i);
 		}
 	}
 	
 	private static boolean setToColumn(Block[][] pMatrix, BlockColor pColor, int pSize) {
 		//compute the fitting columns
-		int[] help  = new int[pMatrix[0].length];
-		int count = 0;
+		ArrayList<Integer> help = new ArrayList<Integer>();
 		for(int i = 0; i < pMatrix[0].length; ++i) {
 			if(fitsInColumn(pMatrix, i, pSize)) {
-				help[count] = i;
-				++count;
+				help.add(i);
 			}
 		}
-		int[] cols = new int[count];
+		int count = help.size();
+		Integer[] cols = new Integer[count];
+		cols = help.toArray(cols);
 		for(int i = 0; i < count; ++i) {
-			cols[i] = help[i];
+			cols[i] = help.get(i);
 		}
 		
 		//compute the fitting positions in the chosen column and set it to a random possible position
 		if(count > 0) {			
 			int randomColumnNumber = cols[Randomizer.nextInt(count)];
-			help = new int[pMatrix[0].length];
-			count = 0;
+			help.clear();
 			for(int i = 0; i < pMatrix[0].length; ++i) {
 				if(fitsInColumnPosition(pMatrix, randomColumnNumber, i, pSize)) {
-					help[count] = i;
-					++count;
+					help.add(i);
 				}
 			}
+			count = help.size();
 			if(count > 0) {
-				int pos[] = new int[count];
+				Integer[] pos = new Integer[count];
+				pos = help.toArray(pos);
 				int randomPosNumber = pos[Randomizer.nextInt(count)];
 				setToPositionInColumn(pMatrix, randomColumnNumber, randomPosNumber, pColor, pSize);
 				return true;
@@ -296,7 +300,7 @@ public class LevelGenerator {
 	
 	private static boolean fitsInColumnPosition(Block[][] pMatrix, int pColumn, int pPosition, int pSize) {
 		int space = 0;
-		for(int i = 0; i < pMatrix[0].length && space < pSize; ++i) {
+		for(int i = pPosition; i < pMatrix[0].length && space < pSize; ++i) {
 			if(pMatrix[i][pColumn] == null) {
 				++space;
 			} else {
@@ -307,7 +311,7 @@ public class LevelGenerator {
 	}
 	
 	private static void setToPositionInColumn(Block[][] pMatrix, int pColumn, int pPosition, BlockColor pColor, int pSize) {
-		for(int i = 0; i < pSize; ++i) {
+		for(int i = pPosition; (i-pPosition) < pSize; ++i) {
 			pMatrix[i][pColumn] = new Block(pColor, i, pColumn);
 		}
 	}
