@@ -253,7 +253,7 @@ public class LevelGenerator {
 	private static boolean setToColumn(Block[][] pMatrix, BlockColor pColor, int pSize) {
 		//compute the fitting columns
 		ArrayList<Integer> help = new ArrayList<Integer>();
-		for(int i = 0; i < pMatrix[0].length; ++i) {
+		for(int i = 0; i < LEVEL_WIDTH; ++i) {
 			if(fitsInColumn(pMatrix, i, pSize)) {
 				help.add(i);
 			}
@@ -269,7 +269,7 @@ public class LevelGenerator {
 		if(count > 0) {			
 			int randomColumnNumber = cols[Randomizer.nextInt(count)];
 			help.clear();
-			for(int i = 0; i < pMatrix[0].length; ++i) {
+			for(int i = 0; i < LEVEL_WIDTH; ++i) {
 				if(fitsInColumnPosition(pMatrix, randomColumnNumber, i, pSize)) {
 					help.add(i);
 				}
@@ -288,7 +288,7 @@ public class LevelGenerator {
 	
 	private static boolean fitsInColumn(Block[][] pMatrix, int pColumn, int pSize) {
 		int space = 0;
-		for(int i = 0; i < pMatrix[pColumn].length && space < pSize; ++i) {
+		for(int i = 0; i < LEVEL_WIDTH && space < pSize; ++i) {
 			if(pMatrix[i][pColumn] == null) {
 				++space;
 			} else {
@@ -300,7 +300,7 @@ public class LevelGenerator {
 	
 	private static boolean fitsInColumnPosition(Block[][] pMatrix, int pColumn, int pPosition, int pSize) {
 		int space = 0;
-		for(int i = pPosition; i < pMatrix[0].length && space < pSize; ++i) {
+		for(int i = pPosition; i < LEVEL_WIDTH && space < pSize; ++i) {
 			if(pMatrix[i][pColumn] == null) {
 				++space;
 			} else {
