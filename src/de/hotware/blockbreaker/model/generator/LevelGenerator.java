@@ -78,6 +78,10 @@ public class LevelGenerator {
 		ArrayList<Block> repl = new ArrayList<Block>();
 		Level level = new Level(matrix, Gravity.NORTH, repl, win);
 		
+		if(!level.checkWin()) {
+			return createRandomSolvedLevel();
+		}
+		
 		return level;
 	}
 	
@@ -174,7 +178,7 @@ public class LevelGenerator {
 				break;
 			}
 			blockColor = pWinValuePairs[i].getBlockColor();
-			if(Randomizer.nextInt(2) + 1 == 1) {
+			if(Randomizer.nextInt(2) == 1) {
 				if(!setToRow(pMatrix, blockColor, winCount)) {
 					setToColumn(pMatrix, blockColor, winCount);
 				}
@@ -195,12 +199,10 @@ public class LevelGenerator {
 			}	
 		}
 		int count = help.size();
-		Integer[] rows = new Integer[count];
-		rows = help.toArray(rows);
 		
 		//compute the fitting positions in the chosen row and set it to a random possible position
 		if(count > 0) {			
-			int randomRowNumber = rows[Randomizer.nextInt(count)];
+			int randomRowNumber = help.get(Randomizer.nextInt(count));
 			help.clear();
 			count = 0;
 			for(int i = 0; i < LEVEL_HEIGHT; ++i) {
@@ -210,9 +212,7 @@ public class LevelGenerator {
 			}
 			count = help.size();
 			if(count > 0) {
-				Integer[] pos = new Integer[count];
-				pos = help.toArray(pos);
-				int randomPosNumber = pos[Randomizer.nextInt(count)];
+				int randomPosNumber = help.get(Randomizer.nextInt(count));
 				setToPositionInRow(pMatrix, randomRowNumber, randomPosNumber, pColor, pSize);
 				return true;
 			}
@@ -245,7 +245,8 @@ public class LevelGenerator {
 	}
 	
 	private static void setToPositionInRow(Block[][] pMatrix, int pRow, int pPosition, BlockColor pColor, int pSize) {
-		for(int i = pPosition; (i-pPosition) < pSize; ++i) {
+		pSize += pPosition;
+		for(int i = pPosition; i < pSize; ++i) {
 			pMatrix[pRow][i] = new Block(pColor, pRow, i);
 		}
 	}
@@ -259,15 +260,10 @@ public class LevelGenerator {
 			}
 		}
 		int count = help.size();
-		Integer[] cols = new Integer[count];
-		cols = help.toArray(cols);
-		for(int i = 0; i < count; ++i) {
-			cols[i] = help.get(i);
-		}
 		
 		//compute the fitting positions in the chosen column and set it to a random possible position
 		if(count > 0) {			
-			int randomColumnNumber = cols[Randomizer.nextInt(count)];
+			int randomColumnNumber = help.get(Randomizer.nextInt(count));
 			help.clear();
 			for(int i = 0; i < LEVEL_WIDTH; ++i) {
 				if(fitsInColumnPosition(pMatrix, randomColumnNumber, i, pSize)) {
@@ -276,9 +272,7 @@ public class LevelGenerator {
 			}
 			count = help.size();
 			if(count > 0) {
-				Integer[] pos = new Integer[count];
-				pos = help.toArray(pos);
-				int randomPosNumber = pos[Randomizer.nextInt(count)];
+				int randomPosNumber = help.get(Randomizer.nextInt(count));
 				setToPositionInColumn(pMatrix, randomColumnNumber, randomPosNumber, pColor, pSize);
 				return true;
 			}
@@ -311,7 +305,8 @@ public class LevelGenerator {
 	}
 	
 	private static void setToPositionInColumn(Block[][] pMatrix, int pColumn, int pPosition, BlockColor pColor, int pSize) {
-		for(int i = pPosition; (i-pPosition) < pSize; ++i) {
+		pSize += pPosition;
+		for(int i = pPosition; i < pSize; ++i) {
 			pMatrix[i][pColumn] = new Block(pColor, i, pColumn);
 		}
 	}
