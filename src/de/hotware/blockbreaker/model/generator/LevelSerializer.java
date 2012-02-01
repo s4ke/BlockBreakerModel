@@ -1,5 +1,7 @@
 package de.hotware.blockbreaker.model.generator;
 
+import java.io.Closeable;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,23 +12,46 @@ import de.hotware.blockbreaker.model.Level;
 
 public class LevelSerializer {
 
-	public static void saveLevel(Level pLevel, String pPath) throws IOException {
+	public static void saveLevel(Level pLevel, String pPath) {
 		//write an level without any listeners!
 		Level save = pLevel.clone();
 		FileOutputStream fos = null;
 		ObjectOutputStream out = null;
-		fos = new FileOutputStream(pPath);
-		out = new ObjectOutputStream(fos);
-		out.writeObject(save);
-		out.close();
+		try {
+			fos = new FileOutputStream(pPath);
+			out = new ObjectOutputStream(fos);
+			out.writeObject(save);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			closeQuietly(fos);
+			closeQuietly(out);
+		}
 	}
 
-	public static Level readLevel(InputStream is) throws IOException, ClassNotFoundException{
+	public static Level readLevel(InputStream is) throws ClassNotFoundException{
 		ObjectInputStream in = null;
 		Level ret = null;
-		in = new ObjectInputStream(is);
-		ret = (Level) in.readObject();
-		in.close();
+		try {
+			in = new ObjectInputStream(is);
+			ret = (Level) in.readObject();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			closeQuietly(in);
+		}
 		return ret;
+	}
+	
+	public static void closeQuietly(Closeable pCloseable) {
+		if(pCloseable != null) {
+			try {
+				pCloseable.close();
+			} catch (IOException e) {
+				
+			}
+		}
 	}
 }
