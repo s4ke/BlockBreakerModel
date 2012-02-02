@@ -1,6 +1,5 @@
 package de.hotware.blockbreaker.model.generator;
 
-import java.io.Closeable;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -9,6 +8,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 import de.hotware.blockbreaker.model.Level;
+import de.hotware.blockbreaker.util.misc.StreamUtil;
 
 public class LevelSerializer {
 
@@ -26,8 +26,8 @@ public class LevelSerializer {
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
-			closeQuietly(fos);
-			closeQuietly(out);
+			StreamUtil.closeQuietly(fos);
+			StreamUtil.closeQuietly(out);
 		}
 	}
 
@@ -40,18 +40,9 @@ public class LevelSerializer {
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
-			closeQuietly(in);
+			StreamUtil.closeQuietly(in);
 		}
 		return ret;
 	}
 	
-	public static void closeQuietly(Closeable pCloseable) {
-		if(pCloseable != null) {
-			try {
-				pCloseable.close();
-			} catch (IOException e) {
-				
-			}
-		}
-	}
 }
