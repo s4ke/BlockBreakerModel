@@ -157,8 +157,8 @@ public class Level implements Serializable, Cloneable {
 				}
 			}
 		}
-		notifyAll();
-		return newBlock;		
+		notifyAll();	
+		return newBlock;
 	}
 
 	/**
@@ -325,4 +325,5 @@ public class Level implements Serializable, Cloneable {
 			}
 		}
 	}
+
 }
