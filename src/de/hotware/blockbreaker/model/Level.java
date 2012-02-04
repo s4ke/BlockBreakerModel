@@ -18,7 +18,7 @@ import de.hotware.blockbreaker.util.misc.Randomizer;
  * TODO: GameEndListener
  * @author Martin Braun
  */
-public class Level implements Serializable, Cloneable {
+public class Level implements Serializable {
 
 	////////////////////////////////////////////////////////////////////
 	////							Constants						////
@@ -47,10 +47,9 @@ public class Level implements Serializable, Cloneable {
 	public Level(Block[][] pMatrix, Gravity pGravity, 
 			ArrayList<Block> pReplacementList, 
 			WinCondition pWinCondition) {
-		this.mMatrix = pMatrix;
+		this(pMatrix, pGravity);
 		this.mSizeX = pMatrix.length;
 		this.mSizeY = pMatrix[0].length;
-		this.mGravity = pGravity;
 		this.mReplacementList = pReplacementList;
 		//TODO: dummy block!
 		this.mWinCondition = pWinCondition;
@@ -64,9 +63,12 @@ public class Level implements Serializable, Cloneable {
 	////////////////////////////////////////////////////////////////////
 	////					Overriden Methods						////
 	////////////////////////////////////////////////////////////////////
+
+	////////////////////////////////////////////////////////////////////
+	////							Methods							////
+	////////////////////////////////////////////////////////////////////
 	
-	@Override
-	public Level clone() {
+	public Level copy() {
 		//deepcopy/create the ReplacementList
 		ArrayList<Block> repl = new ArrayList<Block>();
 		int x = this.mReplacementList.size();
@@ -83,12 +85,8 @@ public class Level implements Serializable, Cloneable {
 				matrix[i][j] = new Block(this.mMatrix[i][j].getColor(), this.mMatrix[i][j].getX(), this.mMatrix[i][j].getY());
 			}
 		}
-		return new Level(matrix, this.mGravity, repl, (WinCondition) this.mWinCondition.clone());
+		return new Level(matrix, this.mGravity, repl, (WinCondition) this.mWinCondition.copy());
 	}
-
-	////////////////////////////////////////////////////////////////////
-	////							Methods							////
-	////////////////////////////////////////////////////////////////////
 	
 	/**
 	 * initializes the Level

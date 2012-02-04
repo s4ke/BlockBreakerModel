@@ -2,7 +2,7 @@ package de.hotware.blockbreaker.model;
 
 import java.io.Serializable;
 
-public class WinCondition implements Serializable, Cloneable {
+public class WinCondition implements Serializable {
 	private static final long serialVersionUID = 191894878776646913L;
 
 	private int[] mWin;
@@ -36,8 +36,7 @@ public class WinCondition implements Serializable, Cloneable {
 		return ret;
 	}
 
-	@Override
-	public WinCondition clone() {
+	public WinCondition copy() {
 		return new WinCondition(this.mWin.clone());
 	}
 	

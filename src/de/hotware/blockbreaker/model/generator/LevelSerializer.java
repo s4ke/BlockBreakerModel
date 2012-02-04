@@ -14,7 +14,7 @@ public class LevelSerializer {
 
 	public static void saveLevel(Level pLevel, String pPath) {
 		//write an level without any listeners!
-		Level save = pLevel.clone();
+		Level save = pLevel.copy();
 		FileOutputStream fos = null;
 		ObjectOutputStream out = null;
 		try {
