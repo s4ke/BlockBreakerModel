@@ -263,6 +263,14 @@ public class Level implements Serializable {
 		}
 		notifyAll();
 	}
+	
+	public void switchToNextGravity() {
+		if(this.mGravity == Gravity.WEST) {
+			this.setGravity(Gravity.NORTH);
+		} else {
+			this.setGravity(Gravity.numberToGravity(this.mGravity.toNumber()+1));
+		}
+	}
 
 	public synchronized Gravity getGravity() {
 		Gravity grav = this.mGravity;
