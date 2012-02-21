@@ -40,6 +40,7 @@ public class Level implements Serializable {
 	protected int mSizeX;
 	protected int mSizeY;
 	protected boolean mStarted;
+	protected boolean mIgnoreUpdates;
 
 	////////////////////////////////////////////////////////////////////
 	////							Constructors					////
@@ -284,6 +285,10 @@ public class Level implements Serializable {
 
 	public WinCondition getWinCondition() {
 		return this.mWinCondition;
+	}
+	
+	public void setIgnoreUpdates(boolean pIgnoreUpdates) {
+		this.mIgnoreUpdates = pIgnoreUpdates;
 	}
 
 	public void setNextBlockListener(INextBlockListener pNextBlockListener) {

@@ -43,20 +43,20 @@ public class LevelGenerator {
 		return level;
 	}
 	
-	public static Level createRandomLevelFromSeed(long pSeed, int pNumberOfMoves) {
+	public static Level createRandomLevelFromSeed(long pSeed, int pNumberOfMoves, int pWinCount) {
 		Randomizer.setSeed(pSeed);
-		Level level = createRandomSolvedLevel();
+		Level level = createRandomSolvedLevel(pWinCount);
 		rearrangeLevel(level, pNumberOfMoves);
 		Randomizer.newRandomObject();
 		return level;
 	}
 	
-	public static Level createRandomSolvedLevel() {
+	public static Level createRandomSolvedLevel(int pWinCount) {
 		Block[][] matrix = new Block[6][6];
 		
 		WinCondition win = null;
 		
-		while(win == null || win.getTotalWinCount() < 10) {
+		while(win == null || win.getTotalWinCount() < pWinCount) {
 			win = new WinCondition(Randomizer.nextInt(7),
 					Randomizer.nextInt(7),
 	        		Randomizer.nextInt(7),
@@ -79,7 +79,7 @@ public class LevelGenerator {
 		Level level = new Level(matrix, Gravity.NORTH, repl, win);
 		
 		if(!level.checkWin()) {
-			return createRandomSolvedLevel();
+			return createRandomSolvedLevel(10);
 		}
 		
 		return level;
