@@ -27,10 +27,10 @@ public class LevelGenerator {
 	 */
 	public static Level randomUncheckedLevel() {
 		ArrayList<Block> list = new ArrayList<Block>();
-		Block[][] matrix = new Block[6][6];
+		Block[][] matrix = new Block[LEVEL_WIDTH][LEVEL_HEIGHT];
 		fillRestOfMatrixWithRandomBlocks(matrix);
-        for(int i = 0; i < 6; ++i) {
-        	for(int j = 0; j < 6; ++j) {
+        for(int i = 0; i < LEVEL_WIDTH; ++i) {
+        	for(int j = 0; j < LEVEL_HEIGHT; ++j) {
         		list.add(new Block(BlockColor.random()));        		
         	}
         }
@@ -52,7 +52,7 @@ public class LevelGenerator {
 	}
 	
 	public static Level createRandomSolvedLevel(int pWinCount) {
-		Block[][] matrix = new Block[6][6];
+		Block[][] matrix = new Block[LEVEL_WIDTH][LEVEL_HEIGHT];
 		
 		WinCondition win = null;
 		
@@ -114,8 +114,8 @@ public class LevelGenerator {
 		Block old;
 		for(int j = 0; j < pNumberOfMoves; ++j) {
 			grav = Gravity.random();
-			x = Randomizer.nextInt(6);
-			y = Randomizer.nextInt(6);
+			x = Randomizer.nextInt(LEVEL_WIDTH);
+			y = Randomizer.nextInt(LEVEL_HEIGHT);
 			old = pMatrix[x][y];
 			pReplacementList.add(new Block(old.getColor()));
 			switch(grav) {
@@ -160,8 +160,8 @@ public class LevelGenerator {
 	}
 	
 	private static void fillRestOfMatrixWithRandomBlocks(Block[][] pMatrix) {
-		for(int i = 0; i < 6; ++i) {
-        	for(int j = 0; j < 6; ++j) {
+		for(int i = 0; i < LEVEL_WIDTH; ++i) {
+        	for(int j = 0; j < LEVEL_HEIGHT; ++j) {
         		if(pMatrix[i][j] == null) {
         			pMatrix[i][j] = new Block(BlockColor.random(), i, j);        
         		}
