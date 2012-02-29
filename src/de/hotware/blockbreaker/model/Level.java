@@ -84,7 +84,7 @@ public class Level implements Serializable {
 				matrix[i][j] = new Block(this.mMatrix[i][j].getColor(), this.mMatrix[i][j].getX(), this.mMatrix[i][j].getY());
 			}
 		}
-		return new Level(matrix, this.mGravity, repl, (WinCondition) this.mWinCondition.copy());
+		return new Level(matrix, this.mGravity, repl, (WinCondition)this.mWinCondition.copy());
 	}
 	
 	/**
@@ -147,7 +147,7 @@ public class Level implements Serializable {
 			this.mMatrix[newBlock.getX()][newBlock.getY()] = newBlock;
 			this.nextBlock();
 			if(this.mWinCondition != null && this.mGameEndListener != null) {
-				if(this.checkWin()){
+				if(this.checkWin()) {
 					this.mGameEndListener.onGameEnd(new GameEndEvent(this,GameEndType.WIN));
 				} else if (this.mReplacementList.size() == 0 && this.mNextBlock.getColor() == BlockColor.NONE) {
 					this.mGameEndListener.onGameEnd(new GameEndEvent(this,GameEndType.LOSE));
