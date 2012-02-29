@@ -72,12 +72,10 @@ public class Level implements Serializable {
 	public Level copy() {
 		//deepcopy/create the ReplacementList
 		ArrayList<Block> repl = new ArrayList<Block>();
-		int x = this.mReplacementList.size();
 		Block var = null;
-		while(repl.size() < this.mReplacementList.size()) {
-			var = this.mReplacementList.get(x-1);
+		for(int x = this.mReplacementList.size(); x > 0; ) {
+			var = this.mReplacementList.get(--x);
 			repl.add(0, new Block(var.getColor()));
-			--x;
 		}
 		//deepcopy the matrix
 		Block[][] matrix = new Block[this.mSizeX][this.mSizeY];
