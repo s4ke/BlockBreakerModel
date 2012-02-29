@@ -15,12 +15,7 @@ public class Randomizer {
 	}
 	
 	public static int nextInt(int pX) {
-		int ret;
-		synchronized(sRandom) {
-			ret = sRandom.nextInt(pX);
-			sRandom.notifyAll();
-		}
-		return ret;
+		return sRandom.nextInt(pX);
 	}
 
 }
