@@ -52,7 +52,6 @@ public class Level implements Serializable {
 		this.mSizeX = pMatrix.length;
 		this.mSizeY = pMatrix[0].length;
 		this.mReplacementList = pReplacementList;
-		//TODO: dummy block!
 		this.mWinCondition = pWinCondition;
 	}
 
@@ -164,8 +163,10 @@ public class Level implements Serializable {
 	protected synchronized void nextBlock() {
 		if(this.mReplacementList != null) {
 			if(this.mReplacementList.size() > 0) {
+				//return the next block in the replacement list
 				this.mNextBlock = this.mReplacementList.remove(0);
 			} else {
+				//return a dummy block
 				this.mNextBlock = new Block(BlockColor.NONE);
 			}			
 		} else {
@@ -237,7 +238,11 @@ public class Level implements Serializable {
 
 	public int getBlocksLeft() {
 		if(this.mReplacementList != null) {
-			return this.mReplacementList.size();
+			if(this.mNextBlock.getColor() == BlockColor.NONE) {
+				return 0;
+			} else {
+				return this.mReplacementList.size() + 1;
+			}	
 		} else {
 			return INFINITE_BLOCKS_LEFT;
 		}
