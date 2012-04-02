@@ -46,6 +46,7 @@ public class LevelGenerator {
 	public static Level createRandomLevelFromSeed(long pSeed, int pNumberOfMoves, int pWinCount) {
 		Randomizer.setSeed(pSeed);
 		Level level = createRandomSolvedLevel(pWinCount);
+		level.getReplacementList().ensureCapacity(pNumberOfMoves);
 		rearrangeLevel(level, pNumberOfMoves);
 		Randomizer.newRandomObject();
 		return level;

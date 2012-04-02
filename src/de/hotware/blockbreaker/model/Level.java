@@ -70,7 +70,7 @@ public class Level implements Serializable {
 	
 	public Level copy() {
 		//deepcopy/create the ReplacementList
-		ArrayList<Block> repl = new ArrayList<Block>();
+		ArrayList<Block> repl = new ArrayList<Block>(this.mReplacementList.size());
 		Block var = null;
 		for(int x = this.mReplacementList.size(); x > 0; ) {
 			var = this.mReplacementList.get(--x);
@@ -94,7 +94,6 @@ public class Level implements Serializable {
 			this.nextBlock();
 			this.mStarted = true;
 		}
-		notifyAll();
 	}
 	
 	/**
@@ -147,13 +146,12 @@ public class Level implements Serializable {
 			this.nextBlock();
 			if(this.mWinCondition != null && this.mGameEndListener != null) {
 				if(this.checkWin()) {
-					this.mGameEndListener.onGameEnd(new GameEndEvent(this,GameEndType.WIN));
+					this.mGameEndListener.onGameEnd(new GameEndEvent(this, GameEndType.WIN));
 				} else if (this.mReplacementList.size() == 0 && this.mNextBlock.getColor() == BlockColor.NONE) {
-					this.mGameEndListener.onGameEnd(new GameEndEvent(this,GameEndType.LOSE));
+					this.mGameEndListener.onGameEnd(new GameEndEvent(this, GameEndType.LOSE));
 				}
 			}
-		}
-		notifyAll();	
+		}	
 		return newBlock;
 	}
 
@@ -175,7 +173,6 @@ public class Level implements Serializable {
 		if(this.mNextBlockListener != null) {
 			this.mNextBlockListener.onNextBlockChanged(new NextBlockChangedEvent(this, this.mNextBlock));
 		}
-		notifyAll();
 	}
 
 	/**
@@ -265,7 +262,6 @@ public class Level implements Serializable {
 				this.mGravityListener.onGravityChanged(new GravityEvent(this, pGravity));
 			}
 		}
-		notifyAll();
 	}
 	
 	public void switchToNextGravity() {
@@ -277,9 +273,7 @@ public class Level implements Serializable {
 	}
 
 	public synchronized Gravity getGravity() {
-		Gravity grav = this.mGravity;
-		notifyAll();
-		return grav;	
+		return this.mGravity;	
 	}
 
 	public Block[][] getMatrix() {
