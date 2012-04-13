@@ -65,7 +65,7 @@ public class Level implements Serializable {
 	////////////////////////////////////////////////////////////////////
 
 	////////////////////////////////////////////////////////////////////
-	////							Methods							////
+	////					Public Methods							////
 	////////////////////////////////////////////////////////////////////
 	
 	public Level copy() {
@@ -168,6 +168,35 @@ public class Level implements Serializable {
 		}	
 		return newBlock;
 	}
+	
+	/**
+	 * Used for checking if player has won or lost. Only use this if WinCondition has been set!
+	 */
+	public boolean checkWin() {
+		if(this.mWinCondition == null) {
+			throw new IllegalStateException(Level.class.toString() + 
+					".checkWin(): WinCondition has not been set, yet!");
+		}
+		boolean win = true; 
+		boolean help = false;
+		int biggestColorNumber = BlockColor.getBiggestColorNumber();
+		int winCountVar;
+		BlockColor blockColorVar;
+		for(int i = BlockColor.getLowestColorNumber(); i <= biggestColorNumber && win; ++i) {
+			winCountVar = this.mWinCondition.getWinCount(i);
+			blockColorVar = BlockColor.numberToColor(i);
+			for(int j = 0; j < this.mSizeX && !help; ++j) {
+				help = (help || this.checkRow(j, blockColorVar, winCountVar) || this.checkColumn(j, blockColorVar, winCountVar)) ;
+			}
+			win = win && help;
+			help = false;
+		}
+		return win;
+	}
+	
+	////////////////////////////////////////////////////////////////////
+	////					Public Methods							////
+	////////////////////////////////////////////////////////////////////
 
 	/**
 	 * sets the nextBlock (either random or according to the replacement list)
@@ -187,27 +216,6 @@ public class Level implements Serializable {
 		if(this.mNextBlockListener != null) {
 			this.mNextBlockListener.onNextBlockChanged(new NextBlockChangedEvent(this, this.mNextBlock));
 		}
-	}
-
-	/**
-	 * Used for checking if player has won or lost. Only use this if WinCondition has been set!
-	 */
-	public boolean checkWin() {
-		boolean win = true; 
-		boolean help = false;
-		int biggestColorNumber = BlockColor.getBiggestColorNumber();
-		int winCountVar;
-		BlockColor blockColorVar;
-		for(int i = BlockColor.getLowestColorNumber(); i <= biggestColorNumber && win; ++i) {
-			winCountVar = this.mWinCondition.getWinCount(i);
-			blockColorVar = BlockColor.numberToColor(i);
-			for(int j = 0; j < this.mSizeX && !help; ++j) {
-				help = (help || this.checkRow(j, blockColorVar, winCountVar) || this.checkColumn(j, blockColorVar, winCountVar)) ;
-			}
-			win = win && help;
-			help = false;
-		}
-		return win;
 	}
 
 	private boolean checkRow(int pX, BlockColor pColorCheck, int pWinCount) {
