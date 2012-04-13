@@ -80,21 +80,16 @@ public class LevelGenerator {
 		Level level = new Level(matrix, Gravity.NORTH, repl, win);
 		
 		if(!level.checkWin()) {
-			return createRandomSolvedLevel(10);
+			return createRandomSolvedLevel(pWinCount);
 		}
 		
 		return level;
 	}
 	
-	public static void rearrangeLevel(Level pLevel, int pNumberOfMoves) {
-		Block[][] matrix = pLevel.getMatrix();
-		ArrayList<Block> repl = pLevel.getReplacementList();
-		
-		createReplacementList(matrix, pNumberOfMoves, repl);
-		
+	public static void rearrangeLevel(Level pLevel, int pNumberOfMoves) {		
 		while(pLevel.checkWin()) {
-			createReplacementList(matrix, pNumberOfMoves, repl);
-		}		
+			createReplacementList(pLevel, pNumberOfMoves);
+		}
 	}
 	
 	////////////////////////////////////////////////////////////////////
@@ -105,59 +100,19 @@ public class LevelGenerator {
 	 * Moves the blocks in the Array around and creates a ReplacementList
 	 * @return the Replacementlist for the given matrix
 	 */
-	private static void createReplacementList(Block[][] pMatrix, 
-			int pNumberOfMoves, 
-			ArrayList<Block> pReplacementList) {
-		Gravity grav;
-		Block var;
+	private static void createReplacementList(Level pLevel, 
+			int pNumberOfMoves) {
+		ArrayList<Block> replacementList = pLevel.getReplacementList();
+		Gravity oldGrav = pLevel.getGravity();
 		int x;
 		int y;
-		Block old;
 		for(int j = 0; j < pNumberOfMoves; ++j) {
-			grav = Gravity.random();
 			x = Randomizer.nextInt(LEVEL_WIDTH);
 			y = Randomizer.nextInt(LEVEL_HEIGHT);
-			old = pMatrix[x][y];
-			pReplacementList.add(new Block(old.getColor()));
-			switch(grav) {
-				case NORTH: {					
-					for(int i = LEVEL_HEIGHT - 1; i > 0; --i) {
-						var = pMatrix[x][i-1];
-						var.setPosition(x,i);
-						pMatrix[x][i] = var;
-					}
-					pMatrix[x][0] = new Block(BlockColor.random(), x, 0);
-					break;
-				}
-				case EAST: {
-					for(int i = 0; i < LEVEL_WIDTH - 1; ++i) {
-						var = pMatrix[i+1][y];
-						var.setPosition(i, y);
-						pMatrix[i][y] = var;
-					}
-					pMatrix[LEVEL_WIDTH - 1][y] = new Block(BlockColor.random(), LEVEL_WIDTH - 1, y);
-					break;
-				}
-				case SOUTH: {
-					for(int i = 0; i < LEVEL_HEIGHT - 1; ++i) {
-						var = pMatrix[x][i+1];
-						var.setPosition(x, i);
-						pMatrix[x][i] = var;
-					}
-					pMatrix[x][LEVEL_HEIGHT - 1] = new Block(BlockColor.random(), x, LEVEL_HEIGHT - 1);
-					break;
-				}
-				case WEST: {
-					for(int i = LEVEL_WIDTH - 1; i > 0; --i) {
-						var = pMatrix[i-1][y];
-						var.setPosition(i, y);
-						pMatrix[i][y] = var;
-					}
-					pMatrix[0][y] = new Block(BlockColor.random(), 0, y);
-					break;
-				}
-			}
+			pLevel.setGravity(Gravity.random());
+			replacementList.add(pLevel.removeBlock(x, y, new Block(BlockColor.random())));
 		}
+		pLevel.setGravity(oldGrav);
 	}
 	
 	private static void fillRestOfMatrixWithRandomBlocks(Block[][] pMatrix) {

@@ -97,52 +97,66 @@ public class Level implements Serializable {
 	}
 	
 	/**
+	 * removes the Block at the specified Position and inserts a
+	 * new Block according to the current Gravity
+	 * @param pX
+	 * @param pY
+	 * @param pNewBlock
+	 * @return the removed Block
+	 */
+	public synchronized Block removeBlock(int pX, int pY, Block pNewBlock) {
+		Block oldBlock = this.mMatrix[pX][pY];
+		Block var;
+		switch(this.mGravity) {
+			case NORTH: {
+				for(int i = pY; i > 0; --i) {
+					var = this.mMatrix[pX][i-1];
+					var.setPosition(pX,i);
+					this.mMatrix[pX][i] = var;
+				}
+				pNewBlock.setPosition(pX,0);
+				break;
+			}
+			case EAST: {
+				for(int i = pX; i < this.mSizeX-1; ++i) {
+					var = this.mMatrix[i+1][pY];
+					var.setPosition(i, pY);
+					this.mMatrix[i][pY] = var;
+				}
+				pNewBlock.setPosition(this.mSizeX-1,pY);;
+				break;
+			}
+			case SOUTH: {
+				for(int i = pY; i < this.mSizeY-1; ++i) {
+					var = this.mMatrix[pX][i+1];
+					var.setPosition(pX, i);
+					this.mMatrix[pX][i] = var;
+				}
+				pNewBlock.setPosition(pX,this.mSizeY-1);
+				break;
+			}
+			case WEST: {
+				for(int i = pX; i > 0; --i) {
+					var = this.mMatrix[i-1][pY];
+					var.setPosition(i, pY);
+					this.mMatrix[i][pY] = var;
+				}
+				pNewBlock.setPosition(0,pY);
+				break;
+			}
+		}
+		this.mMatrix[pNewBlock.getX()][pNewBlock.getY()] = pNewBlock;
+		return oldBlock;
+	}
+	
+	/**
 	 * kills a Block from the matrix at the specified position
 	 * @return the Block that was added after killing
 	 */
 	public synchronized Block killBlock(int pX, int pY) {
 		Block newBlock = this.mNextBlock;
 		if(newBlock.getColor() != BlockColor.NONE) {
-			Block var;
-			switch(this.mGravity) {
-				case NORTH: {
-					for(int i = pY; i > 0; --i) {
-						var = this.mMatrix[pX][i-1];
-						var.setPosition(pX,i);
-						this.mMatrix[pX][i] = var;
-					}
-					newBlock.setPosition(pX,0);
-					break;
-				}
-				case EAST: {
-					for(int i = pX; i < this.mSizeX-1; ++i) {
-						var = this.mMatrix[i+1][pY];
-						var.setPosition(i, pY);
-						this.mMatrix[i][pY] = var;
-					}
-					newBlock.setPosition(this.mSizeX-1,pY);;
-					break;
-				}
-				case SOUTH: {
-					for(int i = pY; i < this.mSizeY-1; ++i) {
-						var = this.mMatrix[pX][i+1];
-						var.setPosition(pX, i);
-						this.mMatrix[pX][i] = var;
-					}
-					newBlock.setPosition(pX,this.mSizeY-1);
-					break;
-				}
-				case WEST: {
-					for(int i = pX; i > 0; --i) {
-						var = this.mMatrix[i-1][pY];
-						var.setPosition(i, pY);
-						this.mMatrix[i][pY] = var;
-					}
-					newBlock.setPosition(0,pY);
-					break;
-				}
-			}
-			this.mMatrix[newBlock.getX()][newBlock.getY()] = newBlock;
+			this.removeBlock(pX, pY, newBlock);
 			this.nextBlock();
 			if(this.mWinCondition != null && this.mGameEndListener != null) {
 				if(this.checkWin()) {
