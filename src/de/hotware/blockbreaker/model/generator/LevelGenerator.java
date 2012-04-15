@@ -109,6 +109,22 @@ public class LevelGenerator {
 		for(int j = 0; j < pNumberOfMoves; ++j) {
 			x = Randomizer.nextInt(LEVEL_WIDTH);
 			y = Randomizer.nextInt(LEVEL_HEIGHT);
+			//if position is invalid randomize which axis has more power and
+			//then let the other one randomize again
+			switch(Randomizer.nextInt(2)) {
+				case 0: {
+					if(x > 0 && x < LEVEL_WIDTH - 1 && y != 0 && y != LEVEL_HEIGHT - 1) {
+						y = Randomizer.nextInt(2) * (LEVEL_HEIGHT - 1);
+					}
+					break;
+				}
+				case 1: {
+					if(y > 0 && y < LEVEL_HEIGHT - 1 && x != 0 && x != LEVEL_WIDTH - 1) {
+						x = Randomizer.nextInt(2) * (LEVEL_WIDTH - 1);
+					}
+					break;
+				}
+			}
 			pLevel.setGravity(Gravity.random());
 			replacementList.add(pLevel.removeBlock(x, y, new Block(BlockColor.random())));
 		}
