@@ -116,7 +116,14 @@ public class LevelGenerator {
 				y = Randomizer.nextInt(LEVEL_HEIGHT);
 			}
 			pLevel.setGravity(grav);
-			replacementList.add(pLevel.removeBlock(x, y, new Block(BlockColor.random())));
+			Block removed = pLevel.removeBlock(x, y, new Block(BlockColor.random()));
+			if(!pLevel.checkWin()) {
+				replacementList.add(removed);
+			} else {
+				j = 0;
+				replacementList.clear();
+			}
+			
 		}
 		pLevel.setGravity(oldGrav);
 	}
