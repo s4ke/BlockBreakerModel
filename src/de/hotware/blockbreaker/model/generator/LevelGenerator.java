@@ -120,7 +120,8 @@ public class LevelGenerator {
 			if(!pLevel.checkWin()) {
 				replacementList.add(removed);
 			} else {
-				j = 0;
+				//repeat the whole loop from the beginning
+				j = -1;
 				replacementList.clear();
 			}
 			
