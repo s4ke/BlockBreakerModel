@@ -12,6 +12,7 @@ import de.hotware.blockbreaker.android.BlockBreakerActivity;
 import de.hotware.blockbreaker.android.R;
 import de.hotware.blockbreaker.android.R.string;
 import de.hotware.blockbreaker.android.view.LevelSceneHandler;
+import de.hotware.blockbreaker.model.gamehandler.GameHandlerInfo.Difficulty;
 import de.hotware.blockbreaker.model.gamehandler.ITimeUpdater.ITimePassedCallback;
 import de.hotware.blockbreaker.model.listeners.IGameEndListener.GameEndEvent;
 
@@ -37,16 +38,13 @@ class TimeAttackGameTypeHandler extends BaseGameTypeHandler {
 	int mGamesLost;
 	int mGamesWon;
 	ITimeUpdater mTimeUpdater;
-	ILevelSceneHandler mLevelSceneHandler;
 	int mScore;
 
-	public TimeAttackGameTypeHandler(ILevelSceneHandler pLevelSceneHandler,
-			ITimeUpdater pTimeUpdater) {
-		this(pLevelSceneHandler, pTimeUpdater, DEFAULT_DURATION_IN_SECONDS, DEFAULT_NUMBER_OF_ALLOWED_LOSES);
+	public TimeAttackGameTypeHandler(ITimeUpdater pTimeUpdater) {
+		this(pTimeUpdater, DEFAULT_DURATION_IN_SECONDS, DEFAULT_NUMBER_OF_ALLOWED_LOSES);
 	}
 
-	public TimeAttackGameTypeHandler(ILevelSceneHandler pLevelSceneHandler,
-			ITimeUpdater pTimeUpdater,
+	public TimeAttackGameTypeHandler(ITimeUpdater pTimeUpdater,
 			int pDurationInSeconds,
 			int pNumberOfAllowedLoses) {
 		super();
@@ -56,9 +54,8 @@ class TimeAttackGameTypeHandler extends BaseGameTypeHandler {
 		this.mGamesLost = 0;
 		this.mScore = 0;
 		this.mTimePassedInSeconds = 0;
-		this.mLevelSceneHandler = pLevelSceneHandler;
-		this.mLevelSceneHandler.setStatusActive(true);
-		this.mLevelSceneHandler.setTimeLeftActive(true);
+		this.mGameHandlerInfo.mLevelSceneHandler.setStatusActive(true);
+		this.mGameHandlerInfo.mLevelSceneHandler.setTimeLeftActive(true);
 		this.mTimeUpdater = pTimeUpdater;
 		this.mTimeUpdater.setTime(pDurationInSeconds);
 		this.mTimeUpdater.setUpdateTime(1.0F);
@@ -69,7 +66,7 @@ class TimeAttackGameTypeHandler extends BaseGameTypeHandler {
 					int timeLeft = (int)Math.round(
 							TimeAttackGameTypeHandler.this.mDurationInSeconds - 
 							(++TimeAttackGameTypeHandler.this.mTimePassedInSeconds));
-					TimeAttackGameTypeHandler.this.mLevelSceneHandler.setTimeLeft(timeLeft);
+					TimeAttackGameTypeHandler.this.mGameHandlerInfo.mLevelSceneHandler.setTimeLeft(timeLeft);
 			}
 
 			@Override
@@ -85,7 +82,7 @@ class TimeAttackGameTypeHandler extends BaseGameTypeHandler {
 		switch(pEvt.getType()) {
 			case WIN: {
 				this.mScore = this.mScore + GAME_WIN_POINT_BONUS + 
-						this.mLevelSceneHandler.getLevel().
+						this.mGameHandlerInfo.mLevelSceneHandler.getLevel().
 							getBlocksLeft() * BLOCK_LEFT_POINT_BONUS;
 				synchronized(this) {
 					this.mTimePassedInSeconds -= GAME_WIN_TIME_BONUS_IN_SECONDS;
@@ -105,7 +102,7 @@ class TimeAttackGameTypeHandler extends BaseGameTypeHandler {
 	@Override
 	public void onEnterFocus() {
 		//assure that some settings are at default just for this gamemode
-		this.blockBreakerActivity.mDifficulty = Difficulty.EASY;
+		this.mGameHandlerInfo.setDifficulty(Difficulty.EASY);
 		//and the rest
 		if(this.mTimePassedInSeconds < this.mDurationInSeconds
 				&& this.mGamesLost < this.mNumberOfAllowedLoses) {
