@@ -12,6 +12,7 @@ import de.hotware.blockbreaker.android.BlockBreakerActivity;
 import de.hotware.blockbreaker.android.R;
 import de.hotware.blockbreaker.android.R.string;
 import de.hotware.blockbreaker.android.view.LevelSceneHandler;
+import de.hotware.blockbreaker.model.gamehandler.ITimeUpdater.ITimePassedCallback;
 import de.hotware.blockbreaker.model.listeners.IGameEndListener.GameEndEvent;
 
 /**
@@ -20,10 +21,6 @@ import de.hotware.blockbreaker.model.listeners.IGameEndListener.GameEndEvent;
  */
 class TimeAttackGameTypeHandler extends BaseGameTypeHandler {
 
-	/**
-	 * 
-	 */
-	private final BlockBreakerActivity blockBreakerActivity;
 	//Time Constants
 	private static final int DEFAULT_DURATION_IN_SECONDS = 120;
 	private static final int GAME_WIN_TIME_BONUS_IN_SECONDS = 15;
@@ -39,46 +36,47 @@ class TimeAttackGameTypeHandler extends BaseGameTypeHandler {
 	int mNumberOfAllowedLoses;
 	int mGamesLost;
 	int mGamesWon;
-	TimerHandler mTimeUpdateHandler;
-	Text mStatusText;
-	Text mTimeText;
-	Text mTimeLeftText;
+	ITimeUpdater mTimeUpdater;
+	ILevelSceneHandler mLevelSceneHandler;
 	int mScore;
 
-	public TimeAttackGameTypeHandler(BlockBreakerActivity blockBreakerActivity, BaseGameActivity pActivity,
-			LevelSceneHandler pLevelSceneHandler) {
-		this(blockBreakerActivity, pActivity, pLevelSceneHandler, DEFAULT_DURATION_IN_SECONDS, DEFAULT_NUMBER_OF_ALLOWED_LOSES);
+	public TimeAttackGameTypeHandler(ILevelSceneHandler pLevelSceneHandler,
+			ITimeUpdater pTimeUpdater) {
+		this(pLevelSceneHandler, pTimeUpdater, DEFAULT_DURATION_IN_SECONDS, DEFAULT_NUMBER_OF_ALLOWED_LOSES);
 	}
 
-	public TimeAttackGameTypeHandler(BlockBreakerActivity blockBreakerActivity, BaseGameActivity pActivity,
-			LevelSceneHandler pLevelSceneHandler,
+	public TimeAttackGameTypeHandler(ILevelSceneHandler pLevelSceneHandler,
+			ITimeUpdater pTimeUpdater,
 			int pDurationInSeconds,
 			int pNumberOfAllowedLoses) {
-		super(pActivity, pLevelSceneHandler);
-		this.blockBreakerActivity = blockBreakerActivity;
+		super();
 		this.mDurationInSeconds = pDurationInSeconds;
 		this.mNumberOfAllowedLoses = pNumberOfAllowedLoses;
 		this.mGamesWon = 0;
 		this.mGamesLost = 0;
 		this.mScore = 0;
 		this.mTimePassedInSeconds = 0;
-		this.mTimeUpdateHandler = new TimerHandler(1.0F, true, new ITimerCallback() {
+		this.mLevelSceneHandler = pLevelSceneHandler;
+		this.mLevelSceneHandler.setStatusActive(true);
+		this.mLevelSceneHandler.setTimeLeftActive(true);
+		this.mTimeUpdater = pTimeUpdater;
+		this.mTimeUpdater.setTime(pDurationInSeconds);
+		this.mTimeUpdater.setUpdateTime(1.0F);
+		this.mTimeUpdater.setTimePassedCallback(new ITimePassedCallback() {
 
 			@Override
-			public void onTimePassed(TimerHandler pTimerHandler) {
-				synchronized(this.blockBreakerActivity) {
+			public void onTimePassed(int pSeconds) {
 					int timeLeft = (int)Math.round(
-							this.blockBreakerActivity.mDurationInSeconds - 
-							(++this.blockBreakerActivity.mTimePassedInSeconds));
-					this.blockBreakerActivity.mTimeLeftText.setText(Integer.toString(timeLeft));
-					if(timeLeft <= 0) {
-						pTimerHandler.setAutoReset(false);
-						pTimerHandler.setTimerCallbackTriggered(true);
-						this.blockBreakerActivity.onTimeAttackEnd();
-					}
-				}
+							TimeAttackGameTypeHandler.this.mDurationInSeconds - 
+							(++TimeAttackGameTypeHandler.this.mTimePassedInSeconds));
+					TimeAttackGameTypeHandler.this.mLevelSceneHandler.setTimeLeft(timeLeft);
 			}
 
+			@Override
+			public void onTimeEnd() {
+				TimeAttackGameTypeHandler.this.onTimeAttackEnd();
+			}
+			
 		});
 	}
 
@@ -87,12 +85,13 @@ class TimeAttackGameTypeHandler extends BaseGameTypeHandler {
 		switch(pEvt.getType()) {
 			case WIN: {
 				this.mScore = this.mScore + GAME_WIN_POINT_BONUS + 
-						this.blockBreakerActivity.mLevel.getBlocksLeft() * BLOCK_LEFT_POINT_BONUS;
+						this.mLevelSceneHandler.getLevel().
+							getBlocksLeft() * BLOCK_LEFT_POINT_BONUS;
 				synchronized(this) {
 					this.mTimePassedInSeconds -= GAME_WIN_TIME_BONUS_IN_SECONDS;
 				}
 				++this.mGamesWon;
-				this.blockBreakerActivity.randomLevel();
+				this.mGameHandlerInfo.randomLevel(this);
 				this.updateStatusText();
 				break;
 			}
