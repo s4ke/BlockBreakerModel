@@ -14,6 +14,8 @@ import de.hotware.blockbreaker.android.R.string;
 import de.hotware.blockbreaker.android.view.LevelSceneHandler;
 import de.hotware.blockbreaker.model.gamehandler.GameHandlerInfo.Difficulty;
 import de.hotware.blockbreaker.model.gamehandler.ITimeUpdater.ITimePassedCallback;
+import de.hotware.blockbreaker.model.gamehandler.TimeAttackGameTypeHandler.ITimeAttackMessenger.ITimeAttackEndDialogCallback;
+import de.hotware.blockbreaker.model.gamehandler.TimeAttackGameTypeHandler.ITimeAttackMessenger.ITimeAttackStartDialogCallback;
 import de.hotware.blockbreaker.model.listeners.IGameEndListener.GameEndEvent;
 
 /**
@@ -39,12 +41,17 @@ class TimeAttackGameTypeHandler extends BaseGameTypeHandler {
 	int mGamesWon;
 	ITimeUpdater mTimeUpdater;
 	int mScore;
+	ITimeAttackMessenger mTimeAttackMessenger;
 
-	public TimeAttackGameTypeHandler(ITimeUpdater pTimeUpdater) {
-		this(pTimeUpdater, DEFAULT_DURATION_IN_SECONDS, DEFAULT_NUMBER_OF_ALLOWED_LOSES);
+	public TimeAttackGameTypeHandler(ITimeUpdater pTimeUpdater, ITimeAttackMessenger pTimeAttackMessenger) {
+		this(pTimeUpdater,
+				pTimeAttackMessenger,
+				DEFAULT_DURATION_IN_SECONDS,
+				DEFAULT_NUMBER_OF_ALLOWED_LOSES);
 	}
 
 	public TimeAttackGameTypeHandler(ITimeUpdater pTimeUpdater,
+			ITimeAttackMessenger pTimeAttackMessenger,
 			int pDurationInSeconds,
 			int pNumberOfAllowedLoses) {
 		super();
@@ -56,6 +63,7 @@ class TimeAttackGameTypeHandler extends BaseGameTypeHandler {
 		this.mTimePassedInSeconds = 0;
 		this.mGameHandlerInfo.mLevelSceneHandler.setStatusActive(true);
 		this.mGameHandlerInfo.mLevelSceneHandler.setTimeLeftActive(true);
+		this.mTimeAttackMessenger = pTimeAttackMessenger;
 		this.mTimeUpdater = pTimeUpdater;
 		this.mTimeUpdater.setTime(pDurationInSeconds);
 		this.mTimeUpdater.setUpdateTime(1.0F);
@@ -106,37 +114,39 @@ class TimeAttackGameTypeHandler extends BaseGameTypeHandler {
 		//and the rest
 		if(this.mTimePassedInSeconds < this.mDurationInSeconds
 				&& this.mGamesLost < this.mNumberOfAllowedLoses) {
-			this.blockBreakerActivity.runOnUiThread(new Runnable() {
-
-				@Override
-				public void run() {
-					AlertDialog.Builder builder = new AlertDialog.Builder(this.blockBreakerActivity);
-					builder.setMessage(this.blockBreakerActivity.getString(R.string.time_attack_start_text))
-					.setCancelable(false)
-					.setPositiveButton(this.blockBreakerActivity.getString(R.string.start), 
-							new DialogInterface.OnClickListener() {
-						
-								@Override
-								public void onClick(DialogInterface pDialog, int pId) {
-									this.blockBreakerActivity.mLevelSceneHandler.setIgnoreInput(false);
-									this.blockBreakerActivity.mEngine.registerUpdateHandler(this.blockBreakerActivity.mTimeUpdateHandler);
-									pDialog.dismiss();
-								}
-
-							});
-					builder.create().show();
-				}
-
-			});
+			this.mTimeAttackMessenger.showTimeAttackStartDialog(TimeAttackMessengerCallback.INSTANCE);
+			
+//			this.blockBreakerActivity.runOnUiThread(new Runnable() {
+//
+//				@Override
+//				public void run() {
+//					AlertDialog.Builder builder = new AlertDialog.Builder(this.blockBreakerActivity);
+//					builder.setMessage(this.blockBreakerActivity.getString(R.string.time_attack_start_text))
+//					.setCancelable(false)
+//					.setPositiveButton(this.blockBreakerActivity.getString(R.string.start), 
+//							new DialogInterface.OnClickListener() {
+//						
+//								@Override
+//								public void onClick(DialogInterface pDialog, int pId) {
+//									this.blockBreakerActivity.mLevelSceneHandler.setIgnoreInput(false);
+//									this.blockBreakerActivity.mEngine.registerUpdateHandler(this.blockBreakerActivity.mTimeUpdateHandler);
+//									pDialog.dismiss();
+//								}
+//
+//							});
+//					builder.create().show();
+//				}
+//
+//			});
 		} else {
-			this.showTimeAttackEndDialog();
+			this.mTimeAttackMessenger.showTimeAttackEndDialog(TimeAttackMessengerCallback.INSTANCE);
 		}
 	}
 
 	@Override
 	public void onLeaveFocus() {
-		this.blockBreakerActivity.mLevelSceneHandler.setIgnoreInput(true);
-		this.blockBreakerActivity.mEngine.unregisterUpdateHandler(this.mTimeUpdateHandler);
+		this.mGameHandlerInfo.mLevelSceneHandler.setIgnoreInput(true);
+		this.mTimeUpdater.pause();
 	}
 
 	@Override
@@ -147,11 +157,11 @@ class TimeAttackGameTypeHandler extends BaseGameTypeHandler {
 	@Override
 	public void requestRestart() {
 		//make sure everything is set back to normal
-		this.blockBreakerActivity.mEngine.unregisterUpdateHandler(this.blockBreakerActivity.mTimeUpdateHandler);
+		this.mTimeUpdater.stop();
 		this.reset();
-		this.blockBreakerActivity.randomLevel();
+		this.mGameHandlerInfo.randomLevel(this);
 		//ready, set go!
-		this.blockBreakerActivity.mEngine.registerUpdateHandler(this.blockBreakerActivity.mTimeUpdateHandler);
+		this.mTimeUpdater.start();
 	}
 
 	@Override
@@ -247,14 +257,54 @@ class TimeAttackGameTypeHandler extends BaseGameTypeHandler {
 		this.mGamesWon = 0;
 		this.mGamesLost = 0;
 		this.mTimePassedInSeconds = 0;
-		this.mTimeUpdateHandler.reset();
-		this.mTimeUpdateHandler.setAutoReset(true);
-		this.blockBreakerActivity.mLevelSceneHandler.setIgnoreInput(false);
+		this.mGameHandlerInfo.mLevelSceneHandler.setIgnoreInput(false);
 		this.updateStatusText();
 	}
 
 	private void updateStatusText() {
 		this.mStatusText.setText(this.blockBreakerActivity.getString(R.string.score) + ": " + this.mScore);
+	}
+	
+	public static interface ITimeAttackMessenger {
+		
+		public void showTimeAttackEndDialog(ITimeAttackEndDialogCallback pCallback);
+		
+		public void showTimeAttackStartDialog(ITimeAttackStartDialogCallback pCallback);
+		
+		public static interface ITimeAttackEndDialogCallback {
+			
+			/**
+			 * has to be called when the TimeAttackEndDialog has been dismissed
+			 */
+			public void onTimeAttackEndDialogEnd();
+			
+		}
+		
+		public static interface ITimeAttackStartDialogCallback {
+			
+			
+			/**
+			 * has to be called when the TimeAttackStartDialog has been dismissed
+			 */
+			public void onTimeAttackStartDialogEnd();
+			
+		}
+		
+	}
+	
+	private enum TimeAttackMessengerCallback implements ITimeAttackEndDialogCallback, ITimeAttackStartDialogCallback {
+		INSTANCE;
+
+		@Override
+		public void onTimeAttackStartDialogEnd() {
+			
+		}
+
+		@Override
+		public void onTimeAttackEndDialogEnd() {
+			
+		}
+		
 	}
 
 }
