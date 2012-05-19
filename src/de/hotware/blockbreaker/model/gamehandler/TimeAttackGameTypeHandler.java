@@ -170,7 +170,7 @@ class TimeAttackGameTypeHandler extends BaseGameTypeHandler {
 		this.updateStatusText();
 		++this.mGamesLost;
 		if(this.mGamesLost <= this.mNumberOfAllowedLoses) {
-			this.blockBreakerActivity.randomLevel();
+			this.mGameHandlerInfo.randomLevel(this);
 		} else {
 			this.onTimeAttackEnd();
 		}

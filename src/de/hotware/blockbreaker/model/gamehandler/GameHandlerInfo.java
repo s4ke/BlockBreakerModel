@@ -6,6 +6,16 @@ import de.hotware.blockbreaker.model.Level;
 import de.hotware.blockbreaker.model.generator.LevelGenerator;
 import de.hotware.blockbreaker.model.listeners.IGameEndListener;
 
+/**
+ * this is the main interface to the Engine specific stuff.
+ * The reason why this isn't done in a class is that
+ * some of the information in here may be spread all over the
+ * life-cycle of games. In order to keep stuff homogeneous there
+ * is no public constructor (enums don't even have a public one)
+ * and all methods signed with DO-CALL have to be called once before
+ * anything can start!
+ * @author Martin Braun
+ */
 public enum GameHandlerInfo {
 	INSTANCE;
 	
@@ -25,10 +35,20 @@ public enum GameHandlerInfo {
 	private int mNumberOfTurns = DEFAULT_NUMBER_OF_TURNS;
 	private Difficulty mDifficulty = Difficulty.EASY;
 	
+	/**
+	 * <b>DO-CALL</b>
+	 */
 	public void setBlockBreakerMessageView(IBlockBreakerMessageView pView) {
 		this.mBlockBreakerMessageView = pView;
 	}
 	
+	/**
+	 * <b>DO-CALL</b>
+	 * @param pLevelSceneHandler
+	 * @param pGameEndListener
+	 * @throws IllegalStateException when the passed LevelSceneHandler
+	 * is the current one
+	 */
 	public void setLevelSceneHandlerAndInitialize(ILevelSceneHandler pLevelSceneHandler,
 			IGameEndListener pGameEndListener) {
 		this.mLevelSceneHandler = pLevelSceneHandler;
@@ -41,15 +61,22 @@ public enum GameHandlerInfo {
 		this.mLevel.setGameEndListener(pGameEndListener);
 		
 		//ignore input, gamehandlers will have to handle starting on their own
-		this.mLevelSceneHandler.setIgnoreInput(true);
-		
+		this.mLevelSceneHandler.setIgnoreInput(true);		
 		this.mLevelSceneHandler.initLevelScene(this.mLevel);
 	}
 	
+	/**
+	 * sets the Number of Turns future Levels will have
+	 * @param pNumberOfTurns
+	 */
 	public void setNumberOfTurns(int pNumberOfTurns) {
 		this.mNumberOfTurns = pNumberOfTurns;
 	}
 	
+	/**
+	 * sets the Difficulty of future
+	 * @param pDifficulty
+	 */
 	public void setDifficulty(Difficulty pDifficulty) {
 		this.mDifficulty = pDifficulty;
 	}
