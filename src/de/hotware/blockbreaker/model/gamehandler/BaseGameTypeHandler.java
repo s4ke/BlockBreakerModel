@@ -9,17 +9,17 @@ import de.hotware.blockbreaker.model.listeners.IGameEndListener;
  */
 public abstract class BaseGameTypeHandler implements IGameEndListener {
 	
-	protected GameHandlerInfo mGameHandlerInfo;
+	protected EngineBindings mEngineBindings;
 	
 	public BaseGameTypeHandler() {
-		this.mGameHandlerInfo = GameHandlerInfo.INSTANCE;
+		this.mEngineBindings = EngineBindings.INSTANCE;
 	}
 
 	/**
 	 * called if Activity loses Focus
 	 */
 	public void onLeaveFocus() {
-		this.mGameHandlerInfo.mLevelSceneHandler.setIgnoreInput(true);
+		this.mEngineBindings.setIgnoreInput(true);
 	}
 
 	public void requestSeedInput() { }
@@ -28,7 +28,7 @@ public abstract class BaseGameTypeHandler implements IGameEndListener {
 	 * called if Activity gains Focus
 	 */
 	public void onEnterFocus() {
-		this.mGameHandlerInfo.mLevelSceneHandler.setIgnoreInput(false);
+		this.mEngineBindings.setIgnoreInput(false);
 	}
 
 	/**
@@ -56,7 +56,7 @@ public abstract class BaseGameTypeHandler implements IGameEndListener {
 	/**
 	 * called when before the GameHandler is changed
 	 */
-	public void cleanUp() {}
+	protected void cleanUp() {}
 
 	/**
 	 * called if the number of turns property has changed, only used for notifying, no information

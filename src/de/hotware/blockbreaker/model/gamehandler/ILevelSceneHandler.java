@@ -14,14 +14,6 @@ public interface ILevelSceneHandler {
 	 */
 	public void initLevelScene(Level pLevel);
 	
-	public void setTimeLeft(float pTimeLeft);
-	
-	public void setTimeLeftActive(boolean pActive);
-	
-	public void setStatusActive(boolean pActive);
-	
-	public void setStatusText(String pText);
-	
 	public Level getLevel();
 
 }

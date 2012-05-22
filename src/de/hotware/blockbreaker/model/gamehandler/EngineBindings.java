@@ -16,7 +16,7 @@ import de.hotware.blockbreaker.model.listeners.IGameEndListener;
  * anything can start!
  * @author Martin Braun
  */
-public enum GameHandlerInfo {
+public enum EngineBindings {
 	INSTANCE;
 	
 	static final int DEFAULT_NUMBER_OF_TURNS = 16;
@@ -28,7 +28,7 @@ public enum GameHandlerInfo {
 	static final Random sRandomSeedObject = new Random();
 	
 	IBlockBreakerMessageView mBlockBreakerMessageView;
-	ILevelSceneHandler mLevelSceneHandler;
+	private ILevelSceneHandler mLevelSceneHandler;
 	private Level mLevel;
 	private long mLevelSeed;
 	private Level mBackupLevel;
@@ -73,12 +73,28 @@ public enum GameHandlerInfo {
 		this.mNumberOfTurns = pNumberOfTurns;
 	}
 	
+	public void setIgnoreInput(boolean pIgnoreInput) {
+		this.mLevelSceneHandler.setIgnoreInput(pIgnoreInput);
+	}
+	
+	public Level getLevel() {
+		return this.mLevel;
+	}
+	
 	/**
 	 * sets the Difficulty of future
 	 * @param pDifficulty
 	 */
 	public void setDifficulty(Difficulty pDifficulty) {
 		this.mDifficulty = pDifficulty;
+	}
+	
+	//TODO: Move levelstarting stuff to extra Interface
+	
+	void cleanUp(BaseGameTypeHandler pOldGameTypeHandler,
+			BaseGameTypeHandler pNewGameTypeHandler) {
+		pOldGameTypeHandler.cleanUp();
+		this.randomLevel(pNewGameTypeHandler);
 	}
 	
 	/**
@@ -100,7 +116,7 @@ public enum GameHandlerInfo {
 	* @param pGameEndlistener
 	*/
 	void randomLevel(IGameEndListener pGameEndListener) {
-		long seed = GameHandlerInfo.sRandomSeedObject.nextLong();
+		long seed = EngineBindings.sRandomSeedObject.nextLong();
 		this.randomLevelFromSeed(pGameEndListener, seed);
 	}
 
@@ -117,17 +133,17 @@ public enum GameHandlerInfo {
 				this.mLevel.start();
 				this.mLevel.setGameEndListener(pGameEndListener);
 		this.mLevelSceneHandler.updateLevel(this.mLevel, pSeed);
-	}	
+	}
 	
 	/**
 	 * enum for Difficulty Settings to make preferences stuff more easy
 	 * @author Martin Braun
 	 */
 	public static enum Difficulty {
-		EASY(GameHandlerInfo.EASY_WIN_COUNT),
-		MEDIUM(GameHandlerInfo.MEDIUM_WIN_COUNT),
-		HARD(GameHandlerInfo.HARD_WIN_COUNT),
-		DEFAULT(GameHandlerInfo.DEFAULT_WIN_COUNT);
+		EASY(EngineBindings.EASY_WIN_COUNT),
+		MEDIUM(EngineBindings.MEDIUM_WIN_COUNT),
+		HARD(EngineBindings.HARD_WIN_COUNT),
+		DEFAULT(EngineBindings.DEFAULT_WIN_COUNT);
 		
 		private int mWinCount;
 		
