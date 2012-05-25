@@ -26,17 +26,17 @@ public class DefaultGameTypeHandler extends BaseGameTypeHandler {
 
 	@Override
 	public void requestRestart() {
-		this.mEngineBindings.restartLevel(this);
+		this.restartLevel();
 	}
 
 	@Override
 	public void requestNextLevel() {
-		this.mEngineBindings.randomLevel(this);
+		this.randomLevel();
 	}
 
 	@Override
 	public void requestSeedInput() {
-		this.mEngineBindings.mBlockBreakerMessageView.showInputSeed(this.mCallback);
+		this.mBlockBreakerMessageView.showInputSeed(this.mCallback);
 	}
 	
 	///////////////////////////////////////////////////////////////////////////////////////////
@@ -47,9 +47,18 @@ public class DefaultGameTypeHandler extends BaseGameTypeHandler {
 
 		@Override
 		public void onSeedChosen(long pSeed) {
-			DefaultGameTypeHandler.this.mEngineBindings.randomLevelFromSeed(
-					DefaultGameTypeHandler.this, pSeed);
+			DefaultGameTypeHandler.this.randomLevelFromSeed(pSeed);
 		}
+		
+	}
+
+	@Override
+	public void init() {
+		
+	}
+
+	@Override
+	protected void cleanUp() {
 		
 	}
 	

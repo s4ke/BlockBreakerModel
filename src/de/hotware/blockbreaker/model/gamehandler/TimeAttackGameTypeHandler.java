@@ -1,6 +1,5 @@
 package de.hotware.blockbreaker.model.gamehandler;
 
-import de.hotware.blockbreaker.model.gamehandler.EngineBindings.Difficulty;
 import de.hotware.blockbreaker.model.gamehandler.ITimeUpdater.ITimePassedCallback;
 import de.hotware.blockbreaker.model.gamehandler.TimeAttackGameTypeHandler.ITimeAttackViewControl.ITimeAttackEndDialogCallback;
 import de.hotware.blockbreaker.model.gamehandler.TimeAttackGameTypeHandler.ITimeAttackViewControl.ITimeAttackStartDialogCallback;
@@ -77,13 +76,13 @@ class TimeAttackGameTypeHandler extends BaseGameTypeHandler {
 		switch(pEvt.getType()) {
 			case WIN: {
 				this.mScore = this.mScore + GAME_WIN_POINT_BONUS + 
-						this.mEngineBindings.getLevel().getBlocksLeft() 
+						this.mLevel.getBlocksLeft() 
 							* BLOCK_LEFT_POINT_BONUS;
 				synchronized(this) {
 					this.mTimePassedInSeconds -= GAME_WIN_TIME_BONUS_IN_SECONDS;
 				}
 				++this.mGamesWon;
-				this.mEngineBindings.randomLevel(this);
+				this.randomLevel();
 				this.updateStatusText();
 				break;
 			}
@@ -97,7 +96,7 @@ class TimeAttackGameTypeHandler extends BaseGameTypeHandler {
 	@Override
 	public void onEnterFocus() {
 		//assure that some settings are at default just for this gamemode
-		this.mEngineBindings.setDifficulty(Difficulty.EASY);
+		this.setDifficulty(Difficulty.EASY);
 		//and the rest
 		if(this.mTimePassedInSeconds < this.mDurationInSeconds
 				&& this.mGamesLost < this.mNumberOfAllowedLoses) {
@@ -132,7 +131,7 @@ class TimeAttackGameTypeHandler extends BaseGameTypeHandler {
 
 	@Override
 	public void onLeaveFocus() {
-		this.mEngineBindings.setIgnoreInput(true);
+		this.mLevelSceneHandler.setIgnoreInput(true);
 		this.mTimeUpdater.pause();
 	}
 
@@ -146,7 +145,7 @@ class TimeAttackGameTypeHandler extends BaseGameTypeHandler {
 		//make sure everything is set back to normal
 		this.mTimeUpdater.stop();
 		this.reset();
-		this.mEngineBindings.randomLevel(this);
+		this.randomLevel();
 		//ready, set go!
 		this.mTimeUpdater.start();
 	}
@@ -157,7 +156,7 @@ class TimeAttackGameTypeHandler extends BaseGameTypeHandler {
 		this.updateStatusText();
 		++this.mGamesLost;
 		if(this.mGamesLost <= this.mNumberOfAllowedLoses) {
-			this.mEngineBindings.randomLevel(this);
+			this.randomLevel();
 		} else {
 			this.onTimeAttackEnd();
 		}
@@ -186,7 +185,7 @@ class TimeAttackGameTypeHandler extends BaseGameTypeHandler {
 	@Override
 	protected void cleanUp() {
 		this.mTimeUpdater.stop();
-		this.mEngineBindings.setIgnoreInput(false);
+		this.mLevelSceneHandler.setIgnoreInput(false);
 		this.mTimeAttackViewControl.cleanUp();
 //		this.blockBreakerActivity.mEngine.unregisterUpdateHandler(this.mTimeUpdateHandler);
 //		this.blockBreakerActivity.mLevelSceneHandler.setIgnoreInput(false);
@@ -200,7 +199,7 @@ class TimeAttackGameTypeHandler extends BaseGameTypeHandler {
 	}
 
 	public void onTimeAttackEnd() {
-		this.mEngineBindings.setIgnoreInput(true);
+		this.mLevelSceneHandler.setIgnoreInput(true);
 		this.mTimeUpdater.stop();
 //		this.blockBreakerActivity.mHighscoreManager.
 //			createTimeAttackEntry(this.blockBreakerActivity.mPlayerName,
@@ -243,7 +242,7 @@ class TimeAttackGameTypeHandler extends BaseGameTypeHandler {
 		this.mGamesWon = 0;
 		this.mGamesLost = 0;
 		this.mTimePassedInSeconds = 0;
-		this.mEngineBindings.setIgnoreInput(false);
+		this.mLevelSceneHandler.setIgnoreInput(false);
 		this.updateStatusText();
 	}
 
