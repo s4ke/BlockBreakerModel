@@ -58,7 +58,7 @@ public class DefaultGameTypeHandler extends BaseGameTypeHandler {
 	}
 
 	@Override
-	protected void cleanUp() {
+	public void cleanUp() {
 		
 	}
 	

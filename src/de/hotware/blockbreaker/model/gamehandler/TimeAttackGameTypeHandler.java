@@ -28,22 +28,28 @@ class TimeAttackGameTypeHandler extends BaseGameTypeHandler {
 	ITimeUpdater mTimeUpdater;
 	int mScore;
 	ITimeAttackViewControl mTimeAttackViewControl;
+	IHighscoreManager mHighscoreManager;
+	TimeAttackViewCallback mTimeAttackViewCallback;
 
 	public TimeAttackGameTypeHandler(ITimeUpdater pTimeUpdater,
-			ITimeAttackViewControl pTimeAttackMessenger) {
+			ITimeAttackViewControl pTimeAttackMessenger,
+			IHighscoreManager pHighscoreManager) {
 		this(pTimeUpdater,
 				pTimeAttackMessenger,
 				DEFAULT_DURATION_IN_SECONDS,
-				DEFAULT_NUMBER_OF_ALLOWED_LOSES);
+				DEFAULT_NUMBER_OF_ALLOWED_LOSES,
+				pHighscoreManager);
 	}
 
 	public TimeAttackGameTypeHandler(ITimeUpdater pTimeUpdater,
 			ITimeAttackViewControl pTimeAttackMessenger,
 			int pDurationInSeconds,
-			int pNumberOfAllowedLoses) {
+			int pNumberOfAllowedLoses,
+			IHighscoreManager pHighscoreManager) {
 		super();
 		this.mDurationInSeconds = pDurationInSeconds;
 		this.mNumberOfAllowedLoses = pNumberOfAllowedLoses;
+		this.mHighscoreManager = pHighscoreManager;
 		this.mGamesWon = 0;
 		this.mGamesLost = 0;
 		this.mScore = 0;
@@ -53,6 +59,7 @@ class TimeAttackGameTypeHandler extends BaseGameTypeHandler {
 		this.mTimeUpdater = pTimeUpdater;
 		this.mTimeUpdater.setTime(pDurationInSeconds);
 		this.mTimeUpdater.setUpdateTime(1.0F);
+		this.mTimeAttackViewCallback = new TimeAttackViewCallback();
 		this.mTimeUpdater.setTimePassedCallback(new ITimePassedCallback() {
 
 			@Override
@@ -100,7 +107,7 @@ class TimeAttackGameTypeHandler extends BaseGameTypeHandler {
 		//and the rest
 		if(this.mTimePassedInSeconds < this.mDurationInSeconds
 				&& this.mGamesLost < this.mNumberOfAllowedLoses) {
-			this.mTimeAttackViewControl.showTimeAttackStartDialog(TimeAttackViewCallback.INSTANCE);
+			this.mTimeAttackViewControl.showTimeAttackStartDialog(this.mTimeAttackViewCallback);
 			
 //			this.blockBreakerActivity.runOnUiThread(new Runnable() {
 //
@@ -125,7 +132,7 @@ class TimeAttackGameTypeHandler extends BaseGameTypeHandler {
 //
 //			});
 		} else {
-			this.mTimeAttackViewControl.showTimeAttackEndDialog(TimeAttackViewCallback.INSTANCE);
+			this.mTimeAttackViewControl.showTimeAttackEndDialog(this.mTimeAttackViewCallback);
 		}
 	}
 
@@ -183,7 +190,7 @@ class TimeAttackGameTypeHandler extends BaseGameTypeHandler {
 	}
 
 	@Override
-	protected void cleanUp() {
+	public void cleanUp() {
 		this.mTimeUpdater.stop();
 		this.mLevelSceneHandler.setIgnoreInput(false);
 		this.mTimeAttackViewControl.cleanUp();
@@ -201,10 +208,10 @@ class TimeAttackGameTypeHandler extends BaseGameTypeHandler {
 	public void onTimeAttackEnd() {
 		this.mLevelSceneHandler.setIgnoreInput(true);
 		this.mTimeUpdater.stop();
-//		this.blockBreakerActivity.mHighscoreManager.
-//			createTimeAttackEntry(this.blockBreakerActivity.mPlayerName,
-//				this.mGamesWon, this.mGamesLost, this.mScore);
-		this.mTimeAttackViewControl.showTimeAttackEndDialog(TimeAttackViewCallback.INSTANCE);
+		this.mHighscoreManager.
+			createTimeAttackEntry(this.mPlayerName,
+				this.mGamesWon, this.mGamesLost, this.mScore);
+		this.mTimeAttackViewControl.showTimeAttackEndDialog(this.mTimeAttackViewCallback);
 	}
 
 //	private void showTimeAttackEndDialog() {
@@ -266,7 +273,7 @@ class TimeAttackGameTypeHandler extends BaseGameTypeHandler {
 		public void init();
 		
 		/**
-		 * StatusText and TimeLeft stuff made invisible
+		 * StatusText and TimeLeft stuff are made invisible
 		 */
 		public void cleanUp();
 //		this.mTimeLeftText.setVisible(false);
@@ -280,7 +287,7 @@ class TimeAttackGameTypeHandler extends BaseGameTypeHandler {
 			/**
 			 * has to be called when the TimeAttackEndDialog has been dismissed
 			 */
-			public void onTimeAttackEndDialogEnd();
+			public void onTimeAttackEndDialogFinished();
 			
 		}
 		
@@ -290,23 +297,22 @@ class TimeAttackGameTypeHandler extends BaseGameTypeHandler {
 			/**
 			 * has to be called when the TimeAttackStartDialog has been dismissed
 			 */
-			public void onTimeAttackStartDialogEnd();
+			public void onTimeAttackStartDialogFinished();
 			
 		}
 		
 	}
 	
-	private enum TimeAttackViewCallback implements ITimeAttackEndDialogCallback, ITimeAttackStartDialogCallback {
-		INSTANCE;
+	private class TimeAttackViewCallback implements ITimeAttackEndDialogCallback, ITimeAttackStartDialogCallback {
 
 		@Override
-		public void onTimeAttackStartDialogEnd() {
-			
+		public void onTimeAttackStartDialogFinished() {
+			TimeAttackGameTypeHandler.this.mLevelSceneHandler.setIgnoreInput(false);
 		}
 
 		@Override
-		public void onTimeAttackEndDialogEnd() {
-			
+		public void onTimeAttackEndDialogFinished() {
+			TimeAttackGameTypeHandler.this.requestRestart();
 		}
 		
 	}

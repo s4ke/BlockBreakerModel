@@ -67,15 +67,11 @@ public abstract class BaseGameTypeHandler implements IGameEndListener {
 	 */
 	public void requestRestart() {}
 
-	/**
-	 * called upon first start of the game
-	 */
-	public abstract void init();
 
 	/**
 	 * called when before the GameHandler is changed
 	 */
-	protected abstract void cleanUp();
+	public abstract void cleanUp();
 
 	/**
 	 * called if the number of turns property has changed, only used for notifying, no information
@@ -91,11 +87,11 @@ public abstract class BaseGameTypeHandler implements IGameEndListener {
 	
 	/**
 	 * <b>DO-CALL</b>
+	 * initializes the GameTypeHandler and sets the ILevelSceneHandler accordingly
 	 * @param pLevelSceneHandler
 	 * @param pGameEndListener
 	 */
-	public void setLevelSceneHandlerAndInitialize(ILevelSceneHandler pLevelSceneHandler,
-			IGameEndListener pGameEndListener) {
+	public final void init(ILevelSceneHandler pLevelSceneHandler) {
 		this.mLevelSceneHandler = pLevelSceneHandler;
 		long seed = sRandomSeedObject.nextLong();
 		this.mBackupLevel = LevelGenerator.createRandomLevelFromSeed(seed, 
@@ -103,11 +99,14 @@ public abstract class BaseGameTypeHandler implements IGameEndListener {
 				this.mDifficulty.getWinCount());
 		this.mLevel = this.mBackupLevel.copy();
 		this.mLevel.start();
-		this.mLevel.setGameEndListener(pGameEndListener);
+		this.mLevel.setGameEndListener(this);
 		
 		//ignore input, gamehandlers will have to handle starting on their own
-		this.mLevelSceneHandler.setIgnoreInput(true);		
-		this.mLevelSceneHandler.initLevelScene(this.mLevel);
+		this.mLevelSceneHandler.setIgnoreInput(true);
+		if(!this.mLevelSceneHandler.isStarted()) {
+			this.mLevelSceneHandler.initLevelScene(this.mLevel);
+		}
+		this.init();
 	}
 	
 	/**
@@ -117,6 +116,11 @@ public abstract class BaseGameTypeHandler implements IGameEndListener {
 	public void setDifficulty(Difficulty pDifficulty) {
 		this.mDifficulty = pDifficulty;
 	}
+	
+	/**
+	 * called upon first start of the game
+	 */
+	protected abstract void init();
 	
 	/**
 	* restarts the Level by creating a deep copy of the backup level

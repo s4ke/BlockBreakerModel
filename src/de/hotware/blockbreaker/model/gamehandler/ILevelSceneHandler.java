@@ -14,6 +14,11 @@ public interface ILevelSceneHandler {
 	 */
 	public void initLevelScene(Level pLevel);
 	
+	/**
+	 * @return whether the LevelSceneHandler has already been initialized
+	 */
+	public boolean isStarted();
+	
 	public Level getLevel();
 
 }
