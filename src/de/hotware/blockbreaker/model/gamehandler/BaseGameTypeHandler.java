@@ -104,7 +104,7 @@ public abstract class BaseGameTypeHandler implements IGameEndListener {
 		//ignore input, gamehandlers will have to handle starting on their own
 		this.mLevelSceneHandler.setIgnoreInput(true);
 		if(!this.mLevelSceneHandler.isStarted()) {
-			this.mLevelSceneHandler.initLevelScene(this.mLevel);
+			this.mLevelSceneHandler.initLevelScene(this.mLevel, seed);
 		}
 		this.init();
 	}

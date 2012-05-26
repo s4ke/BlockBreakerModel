@@ -12,7 +12,7 @@ public interface ILevelSceneHandler {
 	 * @throws IllegalStateException if Level has already been initialized
 	 * @param pLevel
 	 */
-	public void initLevelScene(Level pLevel);
+	public void initLevelScene(Level pLevel, long pSeed);
 	
 	/**
 	 * @return whether the LevelSceneHandler has already been initialized
