@@ -1,6 +1,8 @@
 package de.hotware.blockbreaker.model.gamehandler;
 
+import de.hotware.blockbreaker.model.gamehandler.DefaultGameTypeHandler.IDefaultViewControl.IDefaultGameEndCallback;
 import de.hotware.blockbreaker.model.gamehandler.IBlockBreakerMessageView.IInputSeedCallback;
+import de.hotware.blockbreaker.model.listeners.IGameEndListener.GameEndEvent.GameEndType;
 
 /**
  * The DefaultGameHandler
@@ -8,20 +10,18 @@ import de.hotware.blockbreaker.model.gamehandler.IBlockBreakerMessageView.IInput
  */
 public class DefaultGameTypeHandler extends BaseGameTypeHandler {
 	
-	private DefaultInputSeedCallback mCallback;
+	protected DefaultCallback mCallback;
+	protected IDefaultViewControl mDefaultViewControl;
 	
-	public DefaultGameTypeHandler() {
+	public DefaultGameTypeHandler(IDefaultViewControl pDefaultViewControl) {
 		super();
-		this.mCallback = new DefaultInputSeedCallback();
+		this.mCallback = new DefaultCallback();
+		this.mDefaultViewControl = pDefaultViewControl;
 	}
 
 	@Override
 	public void onGameEnd(final GameEndEvent pEvt) {
-//		this.blockBreakerActivity.runOnUiThread(new Runnable() {
-//			public void run() {
-//				this.blockBreakerActivity.showEndDialog(pEvt.getType());
-//			}
-//		});
+		this.mDefaultViewControl.showEndDialog(pEvt.getType(), this.mCallback);
 	}
 
 	@Override
@@ -39,19 +39,6 @@ public class DefaultGameTypeHandler extends BaseGameTypeHandler {
 		this.mBlockBreakerMessageView.showInputSeed(this.mCallback);
 	}
 	
-	///////////////////////////////////////////////////////////////////////////////////////////
-	////////////////						Inner Classes					///////////////////
-	///////////////////////////////////////////////////////////////////////////////////////////
-	
-	private class DefaultInputSeedCallback implements IInputSeedCallback {
-
-		@Override
-		public void onSeedChosen(long pSeed) {
-			DefaultGameTypeHandler.this.randomLevelFromSeed(pSeed);
-		}
-		
-	}
-
 	@Override
 	public void init() {
 		
@@ -62,48 +49,46 @@ public class DefaultGameTypeHandler extends BaseGameTypeHandler {
 		
 	}
 	
-//	private void showEndDialog(final GameEndType pResult) {
-//		String resString;
-//
-//		switch(pResult) {
-//			case WIN: {
-//				resString = this.blockBreakerActivity.getString(R.string.win_text);
-//				break;
-//			}
-//			case LOSE: {
-//				resString = this.blockBreakerActivity.getString(R.string.lose_text);
-//				break;
-//			}
-//			default: {
-//				resString = "WTF?";
-//				break;
-//			}
-//		}
-//
-//		AlertDialog.Builder builder = new AlertDialog.Builder(this.blockBreakerActivity);
-//		builder.setMessage(resString + " " + this.blockBreakerActivity.getString(R.string.restart_question))
-//				.setCancelable(true)
-//				.setPositiveButton(this.blockBreakerActivity.getString(R.string.yes),
-//						new DialogInterface.OnClickListener() {
-//							
-//							@Override
-//							public void onClick(DialogInterface pDialog, int pId) {
-//								pDialog.dismiss();
-//								this.blockBreakerActivity.restartLevel();
-//							}
-//							
-//				})
-//				.setNegativeButton(this.blockBreakerActivity.getString(R.string.no),
-//						new DialogInterface.OnClickListener() {
-//							
-//							@Override
-//							public void onClick(DialogInterface pDialog, int pId) {
-//								pDialog.dismiss();
-//								this.blockBreakerActivity.randomLevel();
-//							}
-//							
-//				});
-//		builder.create().show();
-//	}
+	///////////////////////////////////////////////////////////////////////////////////////////
+	////////////////					Inner Classes/Interfaces			///////////////////
+	///////////////////////////////////////////////////////////////////////////////////////////
+		
+	public static interface IDefaultViewControl {
+		
+		public void showEndDialog(GameEndType pGameEnding, IDefaultGameEndCallback pCallback);
+		
+		public static interface IDefaultGameEndCallback {
+			
+			/**
+			 * @param pRestart whether the current level has to be restarted
+			 */
+			public void onEndDialogFinished(boolean pRestart);
+			
+		}
+		
+	}	
+	
+	/**
+	 * the base callback implementation that is needed for all of DefaultGameTypeHandler's purposes
+	 */
+	private class DefaultCallback implements IInputSeedCallback, IDefaultGameEndCallback {
+
+		@Override
+		public void onSeedChosen(long pSeed) {
+			DefaultGameTypeHandler.this.randomLevelFromSeed(pSeed);
+		}
+		
+		
+		@Override
+		public void onEndDialogFinished(boolean pRestart) {
+			if(pRestart) {
+				DefaultGameTypeHandler.this.restartLevel();
+			} else {
+				DefaultGameTypeHandler.this.randomLevel();
+			}
+		}
+		
+	}
+
 
 }
