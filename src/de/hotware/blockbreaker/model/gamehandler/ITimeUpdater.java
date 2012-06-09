@@ -17,9 +17,9 @@ public interface ITimeUpdater {
 	/**
 	 * sets the period Time after which the onTimePassed(pSeconds) method
 	 * is being called
-	 * @param pTime
+	 * @param pUpdateTime
 	 */
-	public void setUpdateTime(float pTime);
+	public void setUpdateTime(float pUpdateTime);
 	
 	/**
 	 * resets the timer to zero time passed behaviour
@@ -47,6 +47,10 @@ public interface ITimeUpdater {
 		
 		public void onTimePassed(int pSeconds);
 		
+		/**
+		 * callback when the time has ended. The ITimeUpdater that has made this call
+		 * has to be in the same state as if he has just been stopped
+		 */
 		public void onTimeEnd();
 		
 	}
