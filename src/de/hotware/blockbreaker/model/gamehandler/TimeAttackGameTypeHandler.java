@@ -32,17 +32,17 @@ public class TimeAttackGameTypeHandler extends BaseGameTypeHandler {
 	TimeAttackViewCallback mTimeAttackViewCallback;
 
 	public TimeAttackGameTypeHandler(ITimeUpdater pTimeUpdater,
-			ITimeAttackViewControl pTimeAttackMessenger,
+			ITimeAttackViewControl pTimeAttackViewControl,
 			IHighscoreManager pHighscoreManager) {
 		this(pTimeUpdater,
-				pTimeAttackMessenger,
+				pTimeAttackViewControl,
 				DEFAULT_DURATION_IN_SECONDS,
 				DEFAULT_NUMBER_OF_ALLOWED_LOSES,
 				pHighscoreManager);
 	}
 
 	public TimeAttackGameTypeHandler(ITimeUpdater pTimeUpdater,
-			ITimeAttackViewControl pTimeAttackMessenger,
+			ITimeAttackViewControl pTimeAttackViewControl,
 			int pDurationInSeconds,
 			int pNumberOfAllowedLoses,
 			IHighscoreManager pHighscoreManager) {
@@ -54,7 +54,7 @@ public class TimeAttackGameTypeHandler extends BaseGameTypeHandler {
 		this.mGamesLost = 0;
 		this.mScore = 0;
 		this.mTimePassedInSeconds = 0;
-		this.mTimeAttackViewControl = pTimeAttackMessenger;
+		this.mTimeAttackViewControl = pTimeAttackViewControl;
 		this.mTimeAttackViewControl.init();
 		this.mTimeUpdater = pTimeUpdater;
 		this.mTimeUpdater.setTime(pDurationInSeconds);
