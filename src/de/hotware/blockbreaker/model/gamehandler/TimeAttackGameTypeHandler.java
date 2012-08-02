@@ -8,7 +8,7 @@ import de.hotware.blockbreaker.model.gamehandler.TimeAttackGameTypeHandler.ITime
  * The TimeAttackGameHandler
  * @author Martin Braun
  */
-class TimeAttackGameTypeHandler extends BaseGameTypeHandler {
+public class TimeAttackGameTypeHandler extends BaseGameTypeHandler {
 
 	//Time Constants
 	private static final int DEFAULT_DURATION_IN_SECONDS = 120;
