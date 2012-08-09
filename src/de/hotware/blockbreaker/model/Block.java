@@ -1,6 +1,9 @@
 package de.hotware.blockbreaker.model;
 
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import de.hotware.blockbreaker.model.listeners.IBlockPositionListener;
 import de.hotware.blockbreaker.model.listeners.IBlockPositionListener.BlockPositionChangedEvent;
@@ -102,6 +105,8 @@ public class Block implements Serializable, Cloneable {
 		YELLOW(4),
 		PURPLE(5);
 
+		private static final List<BlockColor> VALUES =
+				Collections.unmodifiableList(Arrays.asList(BlockColor.values()));
 		private int mColor;
 
 		public static BlockColor random() {
@@ -109,14 +114,7 @@ public class Block implements Serializable, Cloneable {
 		}
 
 		public static BlockColor numberToColor(int pX) {
-			switch(pX) {
-				case 1:	return BLUE;
-				case 2:	return GREEN;
-				case 3:	return RED;
-				case 4: return YELLOW;
-				case 5: return PURPLE;
-			}
-			return NONE;
+			return VALUES.get(pX);
 		}
 
 		private BlockColor(int pColor) {
