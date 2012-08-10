@@ -1,5 +1,8 @@
 package de.hotware.blockbreaker.model.gamehandler;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Random;
 
 import de.hotware.blockbreaker.model.Level;
@@ -170,6 +173,9 @@ public abstract class BaseGameTypeHandler implements IGameEndListener {
 		HARD(BaseGameTypeHandler.HARD_WIN_COUNT),
 		DEFAULT(BaseGameTypeHandler.DEFAULT_WIN_COUNT);
 		
+		private static final List<Difficulty> VALUES =
+				Collections.unmodifiableList(Arrays.asList(Difficulty.values()));
+		
 		private int mWinCount;
 		
 		private Difficulty(int pWinCount) {
@@ -181,20 +187,11 @@ public abstract class BaseGameTypeHandler implements IGameEndListener {
 		}
 		
 		public static Difficulty numberToDifficulty(int pNumber) {
-			switch(pNumber) {
-				case 0: {
-					return EASY;
-				}
-				case 1: {
-					return MEDIUM;
-				}
-				case 2: {
-					return HARD;
-				}
-				default: {
-					return DEFAULT;
-				}
+			Difficulty ret = VALUES.get(pNumber);
+			if(ret == null) {
+				ret = Difficulty.DEFAULT;
 			}
+			return ret;
 		}
 		
 	}

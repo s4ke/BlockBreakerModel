@@ -55,7 +55,6 @@ public class TimeAttackGameTypeHandler extends BaseGameTypeHandler {
 		this.mScore = 0;
 		this.mTimePassedInSeconds = 0;
 		this.mTimeAttackViewControl = pTimeAttackViewControl;
-		this.mTimeAttackViewControl.init();
 		this.mTimeUpdater = pTimeUpdater;
 		this.mTimeUpdater.setTime(pDurationInSeconds);
 		this.mTimeUpdater.setUpdateTime(1.0F);
@@ -171,6 +170,7 @@ public class TimeAttackGameTypeHandler extends BaseGameTypeHandler {
 
 	@Override
 	public void init() {
+		this.mTimeAttackViewControl.init();
 //		this.mTimeLeftText = this.blockBreakerActivity.mLevelSceneHandler.getTimeLeftText();
 //		this.mTimeLeftText.setVisible(true);
 //		this.mTimeLeftText.setIgnoreUpdate(false);
