@@ -31,30 +31,42 @@ public class TimeAttackGameTypeHandler extends BaseGameTypeHandler {
 	IHighscoreManager mHighscoreManager;
 	TimeAttackViewCallback mTimeAttackViewCallback;
 
-	public TimeAttackGameTypeHandler(ITimeUpdater pTimeUpdater,
+	public TimeAttackGameTypeHandler(IBlockBreakerMessageView pBlockBreakerMessageView,
+			ITimeUpdater pTimeUpdater,
 			ITimeAttackViewControl pTimeAttackViewControl,
 			IHighscoreManager pHighscoreManager) {
-		this(pTimeUpdater,
+		this(pBlockBreakerMessageView,
+				pTimeUpdater,
 				pTimeAttackViewControl,
 				DEFAULT_DURATION_IN_SECONDS,
 				DEFAULT_NUMBER_OF_ALLOWED_LOSES,
 				pHighscoreManager);
 	}
 
-	public TimeAttackGameTypeHandler(ITimeUpdater pTimeUpdater,
+	public TimeAttackGameTypeHandler(IBlockBreakerMessageView pBlockBreakerMessageView,
+			ITimeUpdater pTimeUpdater,
 			ITimeAttackViewControl pTimeAttackViewControl,
 			int pDurationInSeconds,
 			int pNumberOfAllowedLoses,
 			IHighscoreManager pHighscoreManager) {
-		super();
+		super(pBlockBreakerMessageView);
 		this.mDurationInSeconds = pDurationInSeconds;
 		this.mNumberOfAllowedLoses = pNumberOfAllowedLoses;
+		if(pHighscoreManager == null) {
+			throw new IllegalArgumentException("pHighscoreManager may not be null");
+		}
 		this.mHighscoreManager = pHighscoreManager;
 		this.mGamesWon = 0;
 		this.mGamesLost = 0;
 		this.mScore = 0;
 		this.mTimePassedInSeconds = 0;
+		if(pTimeAttackViewControl == null) {
+			throw new IllegalArgumentException("pTimeAttackViewControl may not be null");
+		}
 		this.mTimeAttackViewControl = pTimeAttackViewControl;
+		if(pTimeUpdater == null) {
+			throw new IllegalArgumentException("pTimeUpdater may not be null");
+		}
 		this.mTimeUpdater = pTimeUpdater;
 		this.mTimeUpdater.setTime(pDurationInSeconds);
 		this.mTimeUpdater.setUpdateTime(1.0F);

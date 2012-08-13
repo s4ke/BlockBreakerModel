@@ -33,8 +33,11 @@ public abstract class BaseGameTypeHandler implements IGameEndListener {
 	protected int mNumberOfTurns = DEFAULT_NUMBER_OF_TURNS;
 	protected Difficulty mDifficulty = Difficulty.EASY;
 	
-	public BaseGameTypeHandler() {
-		
+	public BaseGameTypeHandler(IBlockBreakerMessageView pBlockBreakerMessageView) {
+		if(pBlockBreakerMessageView == null) {
+			throw new IllegalArgumentException("pBlockBreakerMessageView may not be null");
+		}
+		this.mBlockBreakerMessageView = pBlockBreakerMessageView;
 	}
 
 	/**
@@ -80,13 +83,6 @@ public abstract class BaseGameTypeHandler implements IGameEndListener {
 	 * called if the number of turns property has changed, only used for notifying, no information
 	 */
 	public void onNumberOfTurnsPropertyChanged() {}
-	
-	/**
-	 * <b>DO-CALL</b>
-	 */
-	public void setBlockBreakerMessageView(IBlockBreakerMessageView pView) {
-		this.mBlockBreakerMessageView = pView;
-	}
 	
 	/**
 	 * <b>DO-CALL</b>

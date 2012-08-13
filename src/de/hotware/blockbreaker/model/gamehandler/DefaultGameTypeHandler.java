@@ -13,8 +13,12 @@ public class DefaultGameTypeHandler extends BaseGameTypeHandler {
 	protected DefaultCallback mCallback;
 	protected IDefaultViewControl mDefaultViewControl;
 	
-	public DefaultGameTypeHandler(IDefaultViewControl pDefaultViewControl) {
-		super();
+	public DefaultGameTypeHandler(IBlockBreakerMessageView pBlockBreakerMessageView,
+			IDefaultViewControl pDefaultViewControl) {
+		super(pBlockBreakerMessageView);
+		if(pDefaultViewControl == null) {
+			throw new IllegalArgumentException("pDefaultViewControl may not be null");
+		}
 		this.mCallback = new DefaultCallback();
 		this.mDefaultViewControl = pDefaultViewControl;
 	}
