@@ -277,7 +277,7 @@ public class Level implements Serializable {
 		return turnsLeft.substring(length-3, length);
 	}
 
-	public synchronized void setGravity(Gravity pGravity) {
+	synchronized void setGravity(Gravity pGravity) {
 		if(this.mGravity != pGravity) {
 			this.mGravity = pGravity;
 			if(this.mGravityListener != null) {
@@ -286,7 +286,7 @@ public class Level implements Serializable {
 		}
 	}
 	
-	public void switchToNextGravity() {
+	void switchToNextGravity() {
 		if(this.mGravity == Gravity.WEST) {
 			this.setGravity(Gravity.NORTH);
 		} else {

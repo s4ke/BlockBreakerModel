@@ -1,4 +1,4 @@
-package de.hotware.blockbreaker.model.gamehandler;
+package de.hotware.blockbreaker.model;
 
 
 public interface IHighscoreManager {

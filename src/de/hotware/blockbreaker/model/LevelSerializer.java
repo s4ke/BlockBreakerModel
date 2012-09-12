@@ -1,4 +1,4 @@
-package de.hotware.blockbreaker.model.generator;
+package de.hotware.blockbreaker.model;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -7,7 +7,6 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-import de.hotware.blockbreaker.model.Level;
 import de.hotware.blockbreaker.util.misc.StreamUtil;
 
 public class LevelSerializer {

@@ -1,10 +1,11 @@
-package de.hotware.blockbreaker.model.gamehandler;
+package de.hotware.blockbreaker.model;
 
-import de.hotware.blockbreaker.model.Level;
 
 public interface ILevelSceneHandler {
 	
 	public void setIgnoreInput(boolean pIgnoreInput);
+	
+	public void setGravityChanger(IGravityChanger pGravityChanger);
 
 	public void updateLevel(Level pLevel, long pSeed);
 	
@@ -18,7 +19,5 @@ public interface ILevelSceneHandler {
 	 * @return whether the LevelSceneHandler has already been initialized
 	 */
 	public boolean isStarted();
-	
-	public Level getLevel();
 
 }

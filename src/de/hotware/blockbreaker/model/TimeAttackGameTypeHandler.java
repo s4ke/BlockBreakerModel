@@ -1,8 +1,8 @@
-package de.hotware.blockbreaker.model.gamehandler;
+package de.hotware.blockbreaker.model;
 
-import de.hotware.blockbreaker.model.gamehandler.ITimeUpdater.ITimePassedCallback;
-import de.hotware.blockbreaker.model.gamehandler.TimeAttackGameTypeHandler.ITimeAttackViewControl.ITimeAttackEndDialogCallback;
-import de.hotware.blockbreaker.model.gamehandler.TimeAttackGameTypeHandler.ITimeAttackViewControl.ITimeAttackStartDialogCallback;
+import de.hotware.blockbreaker.model.ITimeUpdater.ITimePassedCallback;
+import de.hotware.blockbreaker.model.TimeAttackGameTypeHandler.ITimeAttackViewControl.ITimeAttackEndDialogCallback;
+import de.hotware.blockbreaker.model.TimeAttackGameTypeHandler.ITimeAttackViewControl.ITimeAttackStartDialogCallback;
 
 /**
  * The TimeAttackGameHandler

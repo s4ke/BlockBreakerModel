@@ -1,14 +1,11 @@
-package de.hotware.blockbreaker.model.generator;
+package de.hotware.blockbreaker.model;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import de.hotware.blockbreaker.model.Block;
-import de.hotware.blockbreaker.model.Level;
-import de.hotware.blockbreaker.model.WinCondition;
-import de.hotware.blockbreaker.model.Block.BlockColor;
 import de.hotware.blockbreaker.model.Level.Gravity;
 import de.hotware.blockbreaker.util.misc.Randomizer;
+import de.hotware.blockbreaker.model.Block.BlockColor;
 
 /**
  * I am pretty proud of this little baby. Took me a while figuring out the

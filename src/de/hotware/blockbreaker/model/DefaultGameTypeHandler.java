@@ -1,7 +1,7 @@
-package de.hotware.blockbreaker.model.gamehandler;
+package de.hotware.blockbreaker.model;
 
-import de.hotware.blockbreaker.model.gamehandler.DefaultGameTypeHandler.IDefaultViewControl.IDefaultGameEndCallback;
-import de.hotware.blockbreaker.model.gamehandler.IBlockBreakerMessageView.IInputSeedCallback;
+import de.hotware.blockbreaker.model.DefaultGameTypeHandler.IDefaultViewControl.IDefaultGameEndCallback;
+import de.hotware.blockbreaker.model.IBlockBreakerMessageView.IInputSeedCallback;
 import de.hotware.blockbreaker.model.listeners.IGameEndListener.GameEndEvent.GameEndType;
 
 /**

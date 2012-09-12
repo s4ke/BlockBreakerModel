@@ -1,12 +1,11 @@
-package de.hotware.blockbreaker.model.gamehandler;
+package de.hotware.blockbreaker.model;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-import de.hotware.blockbreaker.model.Level;
-import de.hotware.blockbreaker.model.generator.LevelGenerator;
+import de.hotware.blockbreaker.model.Level.Gravity;
 import de.hotware.blockbreaker.model.listeners.IGameEndListener;
 
 /**
@@ -14,7 +13,7 @@ import de.hotware.blockbreaker.model.listeners.IGameEndListener;
  * of new game modes. All important Events should be handled here or 
  * at least have a requestMethod which returns a boolean.
  */
-public abstract class BaseGameTypeHandler implements IGameEndListener {
+public abstract class BaseGameTypeHandler implements IGameEndListener, IGravityChanger {
 	
 	protected static final int DEFAULT_NUMBER_OF_TURNS = 16;
 	protected static final int DEFAULT_WIN_COUNT = 10;
@@ -92,6 +91,7 @@ public abstract class BaseGameTypeHandler implements IGameEndListener {
 	 */
 	public final void init(ILevelSceneHandler pLevelSceneHandler) {
 		this.mLevelSceneHandler = pLevelSceneHandler;
+		this.mLevelSceneHandler.setGravityChanger(this);
 		long seed = sRandomSeedObject.nextLong();
 		this.mBackupLevel = LevelGenerator.createRandomLevelFromSeed(seed, 
 				this.mNumberOfTurns, 
@@ -114,6 +114,14 @@ public abstract class BaseGameTypeHandler implements IGameEndListener {
 	 */
 	public void setDifficulty(Difficulty pDifficulty) {
 		this.mDifficulty = pDifficulty;
+	}
+	
+	public void updateGravity(Gravity pGravity) {
+		this.mLevel.setGravity(pGravity);
+	}
+	
+	public void switchToNextGravity() {
+		this.mLevel.switchToNextGravity();
 	}
 	
 	/**

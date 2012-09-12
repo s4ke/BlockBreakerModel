@@ -1,4 +1,4 @@
-package de.hotware.blockbreaker.model.gamehandler;
+package de.hotware.blockbreaker.model;
 
 /**
  * class being used to abstract system specific stuff (view) from the GameHandlers
